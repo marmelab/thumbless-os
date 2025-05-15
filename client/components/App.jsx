@@ -10,53 +10,124 @@ export default function App() {
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+  const [sessionError, setSessionError] = useState(null);
 
   async function startSession() {
-    // Get a session token for OpenAI Realtime API
-    const tokenResponse = await fetch("/token");
-    const data = await tokenResponse.json();
-    const EPHEMERAL_KEY = data.client_secret.value;
+    try {
+      console.log("Starting session...");
+      setSessionError(null);
+      
+      // Get a session token for OpenAI Realtime API
+      console.log("Fetching token...");
+      const tokenResponse = await fetch("/token");
+      const data = await tokenResponse.json();
+      
+      if (!data.client_secret || !data.client_secret.value) {
+        console.error("Invalid token response:", data);
+        setSessionError("Failed to get a valid token. Check your API key.");
+        return;
+      }
+      
+      const EPHEMERAL_KEY = data.client_secret.value;
+      console.log("Token received successfully");
 
-    // Create a peer connection
-    const pc = new RTCPeerConnection();
+      // Create a peer connection
+      console.log("Creating RTCPeerConnection...");
+      const pc = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+      });
+      
+      // Add connection state logging
+      pc.oniceconnectionstatechange = () => {
+        console.log("ICE connection state:", pc.iceConnectionState);
+      };
+      
+      pc.onconnectionstatechange = () => {
+        console.log("Connection state:", pc.connectionState);
+      };
 
-    // Set up to play remote audio from the model
-    audioElement.current = document.createElement("audio");
-    audioElement.current.autoplay = true;
-    pc.ontrack = (e) => (audioElement.current.srcObject = e.streams[0]);
+      // Set up to play remote audio from the model
+      audioElement.current = document.createElement("audio");
+      audioElement.current.autoplay = true;
+      pc.ontrack = (e) => {
+        console.log("Track received:", e.track.kind);
+        audioElement.current.srcObject = e.streams[0];
+      };
 
-    // Add local audio track for microphone input in the browser
-    const ms = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-    });
-    pc.addTrack(ms.getTracks()[0]);
+      // Add local audio track for microphone input in the browser
+      try {
+        console.log("Requesting microphone access...");
+        const ms = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        pc.addTrack(ms.getTracks()[0]);
+        console.log("Microphone track added");
+      } catch (micError) {
+        console.error("Microphone access error:", micError);
+        setSessionError("Failed to access microphone. Please check permissions.");
+        return;
+      }
 
-    // Set up data channel for sending and receiving events
-    const dc = pc.createDataChannel("oai-events");
-    setDataChannel(dc);
+      // Set up data channel for sending and receiving events
+      console.log("Creating data channel...");
+      const dc = pc.createDataChannel("oai-events");
+      
+      dc.onopen = () => {
+        console.log("Data channel opened");
+      };
+      
+      dc.onerror = (err) => {
+        console.error("Data channel error:", err);
+      };
+      
+      setDataChannel(dc);
 
-    // Start the session using the Session Description Protocol (SDP)
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
+      // Start the session using the Session Description Protocol (SDP)
+      console.log("Creating offer...");
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      console.log("Local description set");
 
-    const baseUrl = "https://api.openai.com/v1/realtime";
-    const model = "gpt-4o-realtime-preview-2024-12-17";
-    const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
-      method: "POST",
-      body: offer.sdp,
-      headers: {
-        Authorization: `Bearer ${EPHEMERAL_KEY}`,
-        "Content-Type": "application/sdp",
-      },
-    });
+      const baseUrl = "https://api.openai.com/v1/realtime";
+      const model = "gpt-4o-realtime-preview-2024-12-17";
+      
+      // We'll send instructions via session messages later, not as headers
+      console.log("Sending SDP request...");
+      const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
+        method: "POST",
+        body: offer.sdp,
+        headers: {
+          Authorization: `Bearer ${EPHEMERAL_KEY}`,
+          "Content-Type": "application/sdp",
+          "OpenAI-Beta": "assistants=v1", // Opt into the latest API behavior
+        },
+      });
+      
+      if (!sdpResponse.ok) {
+        const errorText = await sdpResponse.text();
+        console.error("SDP response error:", sdpResponse.status, errorText);
+        setSessionError(`API error: ${sdpResponse.status} ${errorText}`);
+        return;
+      }
 
-    const answer = {
-      type: "answer",
-      sdp: await sdpResponse.text(),
-    };
-    await pc.setRemoteDescription(answer);
+      console.log("SDP response received");
+      const sdpText = await sdpResponse.text();
+      
+      const answer = {
+        type: "answer",
+        sdp: sdpText,
+      };
+      
+      console.log("Setting remote description...");
+      await pc.setRemoteDescription(answer);
+      console.log("Remote description set");
 
-    peerConnection.current = pc;
+      peerConnection.current = pc;
+      console.log("Session setup complete, waiting for data channel to open...");
+    } catch (error) {
+      console.error("Session setup error:", error);
+      setSessionError(`Failed to start session: ${error.message}`);
+    }
   }
 
   // Stop current session, clean up peer connection and data channel
@@ -164,6 +235,7 @@ export default function App() {
               sendTextMessage={sendTextMessage}
               events={events}
               isSessionActive={isSessionActive}
+              sessionError={sessionError}
             />
           </section>
         </section>

@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { CloudLightning, CloudOff, MessageSquare } from "react-feather";
 import Button from "./Button";
+import InputPrompt from "./InputPrompt";
 
-function SessionStopped({ startSession }) {
+function SessionStopped({ startSession, sessionError }) {
   const [isActivating, setIsActivating] = useState(false);
 
   function handleStartSession() {
     if (isActivating) return;
 
     setIsActivating(true);
-    startSession();
+    startSession().catch(() => {
+      // Reset activation state if there's an error
+      setTimeout(() => setIsActivating(false), 1000);
+    });
   }
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
+    <div className="flex flex-col items-center justify-center w-full h-full gap-2">
       <Button
         onClick={handleStartSession}
         className={isActivating ? "bg-gray-600" : "bg-red-600"}
@@ -21,6 +25,12 @@ function SessionStopped({ startSession }) {
       >
         {isActivating ? "starting session..." : "start session"}
       </Button>
+      
+      {sessionError && (
+        <div className="text-red-500 text-sm mt-2 max-w-md text-center">
+          {sessionError}
+        </div>
+      )}
     </div>
   );
 }
@@ -34,7 +44,8 @@ function SessionActive({ stopSession, sendTextMessage }) {
   }
 
   return (
-    <div className="flex items-center justify-center w-full h-full gap-4">
+    <div className="flex items-center justify-center w-full h-full gap-4 relative">
+      <InputPrompt isSessionActive={true} />
       <input
         onKeyDown={(e) => {
           if (e.key === "Enter" && message.trim()) {
@@ -42,7 +53,7 @@ function SessionActive({ stopSession, sendTextMessage }) {
           }
         }}
         type="text"
-        placeholder="send a text message..."
+        placeholder="Ask any question or type a topic to learn about..."
         className="border border-gray-200 rounded-full p-4 flex-1"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
@@ -72,6 +83,7 @@ export default function SessionControls({
   sendTextMessage,
   serverEvents,
   isSessionActive,
+  sessionError
 }) {
   return (
     <div className="flex gap-4 border-t-2 border-gray-200 h-full rounded-md">
@@ -83,7 +95,10 @@ export default function SessionControls({
           serverEvents={serverEvents}
         />
       ) : (
-        <SessionStopped startSession={startSession} />
+        <SessionStopped 
+          startSession={startSession} 
+          sessionError={sessionError}
+        />
       )}
     </div>
   );
