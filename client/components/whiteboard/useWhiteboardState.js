@@ -111,44 +111,42 @@ export function useWhiteboardState(isSessionActive, sendClientEvent, events) {
 
 // Helper functions for useWhiteboardState hook
 
-function initializeSession(sendClientEvent, whiteboardHtml, setToolsAdded) {
-  // Register tools with a slight delay to ensure session is fully established
-  setTimeout(() => {
-    // First, register the tools
-    sendClientEvent(createSessionUpdate(AI_WHITEBOARD_INSTRUCTIONS));
-    setToolsAdded(true);
-    console.log("Tools registered with session");
+function initializeSession(
+  sendClientEvent,
+  setToolsAdded,
+  AI_WHITEBOARD_INSTRUCTIONS,
+  SESSION_INSTRUCTIONS,
+  SYSTEM_INSTRUCTIONS,
+) {
+  // First, register the tools
+  sendClientEvent(createSessionUpdate(AI_WHITEBOARD_INSTRUCTIONS));
+  setToolsAdded(true);
+  console.log("Tools registered with session");
 
-    // Send instructions as a system message to ensure the assistant behaves correctly
-    setTimeout(() => {
-      // First update the session instructions
-      sendClientEvent({
-        type: "session.update",
-        session: {
-          instructions: SESSION_INSTRUCTIONS,
+  // Update the session instructions
+  sendClientEvent({
+    type: "session.update",
+    session: {
+      instructions: SESSION_INSTRUCTIONS,
+    },
+  });
+
+  // Add an explicit system message for initial silence and proper behavior
+  sendClientEvent({
+    type: "conversation.item.create",
+    item: {
+      type: "message",
+      role: "system",
+      content: [
+        {
+          type: "input_text",
+          text: SYSTEM_INSTRUCTIONS,
         },
-      });
+      ],
+    },
+  });
 
-      // Then add an explicit system message for initial silence and proper behavior
-      setTimeout(() => {
-        sendClientEvent({
-          type: "conversation.item.create",
-          item: {
-            type: "message",
-            role: "system",
-            content: [
-              {
-                type: "input_text",
-                text: SYSTEM_INSTRUCTIONS,
-              },
-            ],
-          },
-        });
-
-        console.log("System instructions sent, waiting for user to speak...");
-      }, 500);
-    }, 1500);
-  }, 1000);
+  console.log("System instructions sent, waiting for user to speak...");
 }
 
 function processFunctionCalls(
@@ -226,25 +224,23 @@ function checkNeedForVisualPrompt(
     !whiteboardHtml.includes("Welcome to AI Teaching Assistant") &&
     whiteboardHtml !== ""
   ) {
-    setTimeout(() => {
-      // Use a system message followed by response.create for more reliable continuation
-      sendClientEvent({
-        type: "conversation.item.create",
-        item: {
-          type: "message",
-          role: "system",
-          content: [
-            {
-              type: "input_text",
-              text: SYSTEM_MESSAGES.promptUpdate,
-            },
-          ],
-        },
-      });
+    // Use a system message followed by response.create for more reliable continuation
+    sendClientEvent({
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "system",
+        content: [
+          {
+            type: "input_text",
+            text: SYSTEM_MESSAGES.promptUpdate,
+          },
+        ],
+      },
+    });
 
-      // Create a new response to continue the flow
-      sendClientEvent({ type: "response.create" });
-    }, 1500);
+    // Create a new response to continue the flow
+    sendClientEvent({ type: "response.create" });
   }
 }
 
@@ -316,13 +312,11 @@ function detectUserFirstMessage(
     setUserHasSpoken(true);
 
     // After the user speaks, send a follow-up instruction for a natural teaching response
-    setTimeout(() => {
-      sendClientEvent({
-        type: "response.create",
-        response: {
-          instructions: SYSTEM_MESSAGES.userSpoken,
-        },
-      });
-    }, 500);
+    sendClientEvent({
+      type: "response.create",
+      response: {
+        instructions: SYSTEM_MESSAGES.userSpoken,
+      },
+    });
   }
 }

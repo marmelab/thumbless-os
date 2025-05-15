@@ -86,29 +86,23 @@ export function createSessionUpdate(whiteboardHtml) {
 }
 
 // Send a system message followed by triggering a response
-export function sendSystemMessageAndResponse(
-  sendClientEvent,
-  message,
-  delay = 800,
-) {
-  setTimeout(() => {
-    sendClientEvent({
-      type: "conversation.item.create",
-      item: {
-        type: "message",
-        role: "system",
-        content: [
-          {
-            type: "input_text",
-            text: message,
-          },
-        ],
-      },
-    });
+export function sendSystemMessageAndResponse(sendClientEvent, message) {
+  sendClientEvent({
+    type: "conversation.item.create",
+    item: {
+      type: "message",
+      role: "system",
+      content: [
+        {
+          type: "input_text",
+          text: message,
+        },
+      ],
+    },
+  });
 
-    // Create a new response to continue the flow
-    sendClientEvent({ type: "response.create" });
-  }, delay);
+  // Create a new response to continue the flow
+  sendClientEvent({ type: "response.create" });
 }
 
 // Handle write_to_whiteboard function call
@@ -186,7 +180,7 @@ export function handleClearWhiteboard(setWhiteboardHtml, sendClientEvent) {
   setWhiteboardHtml("");
 
   // Continue with a new topic
-  sendSystemMessageAndResponse(sendClientEvent, SYSTEM_MESSAGES.newTopic, 500);
+  sendSystemMessageAndResponse(sendClientEvent, SYSTEM_MESSAGES.newTopic);
 }
 
 // Initialize session with tools and instructions
@@ -197,43 +191,35 @@ export function initializeSession(
   SESSION_INSTRUCTIONS,
   SYSTEM_INSTRUCTIONS,
 ) {
-  // Register tools with a slight delay to ensure session is fully established
-  setTimeout(() => {
-    // First, register the tools
-    sendClientEvent(createSessionUpdate(AI_WHITEBOARD_INSTRUCTIONS));
-    setToolsAdded(true);
-    console.log("Tools registered with session");
+  // First, register the tools
+  sendClientEvent(createSessionUpdate(AI_WHITEBOARD_INSTRUCTIONS));
+  setToolsAdded(true);
+  console.log("Tools registered with session");
 
-    // Send instructions as a system message to ensure the assistant behaves correctly
-    setTimeout(() => {
-      // First update the session instructions
-      sendClientEvent({
-        type: "session.update",
-        session: {
-          instructions: SESSION_INSTRUCTIONS,
+  // Update the session instructions
+  sendClientEvent({
+    type: "session.update",
+    session: {
+      instructions: SESSION_INSTRUCTIONS,
+    },
+  });
+
+  // Add an explicit system message for initial silence and proper behavior
+  sendClientEvent({
+    type: "conversation.item.create",
+    item: {
+      type: "message",
+      role: "system",
+      content: [
+        {
+          type: "input_text",
+          text: SYSTEM_INSTRUCTIONS,
         },
-      });
+      ],
+    },
+  });
 
-      // Then add an explicit system message for initial silence and proper behavior
-      setTimeout(() => {
-        sendClientEvent({
-          type: "conversation.item.create",
-          item: {
-            type: "message",
-            role: "system",
-            content: [
-              {
-                type: "input_text",
-                text: SYSTEM_INSTRUCTIONS,
-              },
-            ],
-          },
-        });
-
-        console.log("System instructions sent, waiting for user to speak...");
-      }, 500);
-    }, 1500);
-  }, 1000);
+  console.log("System instructions sent, waiting for user to speak...");
 }
 
 // Process function calls in a response
@@ -297,25 +283,23 @@ export function checkNeedForVisualPrompt(
     !whiteboardHtml.includes("Welcome to AI Teaching Assistant") &&
     whiteboardHtml !== ""
   ) {
-    setTimeout(() => {
-      // Use a system message followed by response.create for more reliable continuation
-      sendClientEvent({
-        type: "conversation.item.create",
-        item: {
-          type: "message",
-          role: "system",
-          content: [
-            {
-              type: "input_text",
-              text: SYSTEM_MESSAGES.promptUpdate,
-            },
-          ],
-        },
-      });
+    // Use a system message followed by response.create for more reliable continuation
+    sendClientEvent({
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "system",
+        content: [
+          {
+            type: "input_text",
+            text: SYSTEM_MESSAGES.promptUpdate,
+          },
+        ],
+      },
+    });
 
-      // Create a new response to continue the flow
-      sendClientEvent({ type: "response.create" });
-    }, 1500);
+    // Create a new response to continue the flow
+    sendClientEvent({ type: "response.create" });
   }
 }
 
@@ -337,13 +321,11 @@ export function detectUserFirstMessage(
     setUserHasSpoken(true);
 
     // After the user speaks, send a follow-up instruction for a natural teaching response
-    setTimeout(() => {
-      sendClientEvent({
-        type: "response.create",
-        response: {
-          instructions: SYSTEM_MESSAGES.userSpoken,
-        },
-      });
-    }, 500);
+    sendClientEvent({
+      type: "response.create",
+      response: {
+        instructions: SYSTEM_MESSAGES.userSpoken,
+      },
+    });
   }
 }
