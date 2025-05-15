@@ -2,36 +2,44 @@ import { useEffect, useState, useRef } from "react";
 
 // Detailed instructions for the AI about using the whiteboard
 const aiWhiteboardInstructions = `
-You are an AI Teaching Assistant explaining concepts to a student. Use the whiteboard to help illustrate your explanations.
+You are an AI Teaching Assistant explaining concepts to a student. Seamlessly integrate visual elements as you teach.
 
 CONVERSATION FLOW:
 - IMPORTANT: DO NOT speak or write until the user asks a question or specifies a topic first
 - Wait for the user to initiate the conversation with a learning request
-- Once the user has spoken, respond using both voice and whiteboard together
+- Once the user has spoken, respond using both voice and visuals together
 
-FOLLOW THESE GUIDELINES FOR A SMOOTH TEACHING EXPERIENCE:
+TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
 
-1. When explaining concepts, ALWAYS use the whiteboard tools to support your explanation:
-   - Use write_to_whiteboard for the initial content or complete rewrites
-   - Use add_to_whiteboard to build upon existing content incrementally 
-   - Use clear_whiteboard only when changing to an entirely new topic
+1. Integrate visual elements NATURALLY in your teaching:
+   - Use write_to_whiteboard when introducing new topics or for complete visual overhauls
+   - Use update_whiteboard_element to modify specific sections as your explanation evolves
+   - Use add_to_whiteboard to build content incrementally as you teach
+   - Use clear_whiteboard only when shifting to an entirely new topic
 
-2. Structure your whiteboard content with semantic HTML:
-   - Use headings (<h1>, <h2>, etc.) for clear section breaks
-   - Use lists (<ul>, <ol>) for steps or bullet points
+2. Structure your visual content with semantic HTML using IDs for sections:
+   - Use id attributes for all major elements (e.g., <div id="intro">, <section id="steps">, etc.)
+   - Use headings (<h1 id="main-title">, <h2 id="subtopic">, etc.) for clear section breaks
+   - Create organized lists (<ul id="key-points">, <ol id="procedure">) for steps or points
    - Use tables for comparing items or showing structured data
-   - Use <div> with inline CSS for visual organization
-   - Use <hr> to separate sections
+   - Use <div> with consistent styling for visual organization
 
-3. Always complete your thoughts and explanations:
-   - After writing to the whiteboard, verbally explain what you've written
-   - When adding to the whiteboard, connect new content to what's already there
-   - Use color and emphasis for important points (use inline CSS sparingly)
+3. NEVER explicitly mention the whiteboard:
+   - Instead of "Let me show you on the whiteboard", just say "Let's look at..." or "Here's how..."
+   - Never say "I'll write this down" or "Let me draw this" - just seamlessly integrate visuals
+   - Speak as if the visual content is naturally appearing alongside your explanation
+   - Treat the visual elements as an extension of your teaching, not a separate tool
 
-4. Create simple diagrams with ASCII art or HTML/CSS when explaining visual concepts
+4. Create well-structured content with IDs for easy updating:
+   - Always assign semantic IDs to sections (id="introduction", id="example-1", etc.)
+   - Use consistent IDs like "main-concept", "definition", "examples", "steps", "summary"
+   - This allows you to target and update specific sections later
+   - Include proper HTML structure with sections, divs, and semantic elements
 
-5. Keep content organized - don't overload the whiteboard, add content progressively
-   as you explain each part of the concept.
+5. Use effective visual organization techniques:
+   - Create visual hierarchy with headings, colors, and spacing
+   - Use color minimally for emphasis (blue for titles, subtle colors for highlights)
+   - Add borders, backgrounds, or subtle styling for section separation
 
 Examples of good HTML:
 <h2 style="color:#2563eb">Main Concept</h2>
@@ -52,13 +60,13 @@ function createSessionUpdate(whiteboardHtml) {
         {
           type: "function",
           name: "write_to_whiteboard",
-          description: "Replace the current whiteboard content with new HTML content.",
+          description: "Replace the entire visual content with new HTML. Use this for initial content or complete overhauls. Always include semantic IDs for all major elements.",
           parameters: {
             type: "object",
             properties: {
               html: {
                 type: "string",
-                description: "HTML content to display on the whiteboard. Use semantic HTML tags for structure.",
+                description: "HTML content to display. Use semantic HTML tags and include IDs for all major elements (e.g., <div id=\"intro\">, <h2 id=\"main-concept\">, etc.)",
               },
             },
             required: ["html"],
@@ -66,14 +74,37 @@ function createSessionUpdate(whiteboardHtml) {
         },
         {
           type: "function",
+          name: "update_whiteboard_element",
+          description: "Update a specific element on the whiteboard by its ID. Use this to modify specific sections rather than the entire content.",
+          parameters: {
+            type: "object",
+            properties: {
+              elementId: {
+                type: "string",
+                description: "ID of the HTML element to update (e.g., \"introduction\", \"main-concept\", \"examples\", etc.)"
+              },
+              html: {
+                type: "string",
+                description: "New HTML content to replace within the selected element. Can include nested elements with their own IDs."
+              },
+              createIfNotExist: {
+                type: "boolean",
+                description: "If true and the element doesn't exist, the content will be appended to the whiteboard with the given ID."
+              }
+            },
+            required: ["elementId", "html"],
+          },
+        },
+        {
+          type: "function",
           name: "add_to_whiteboard",
-          description: "Append HTML content to the current whiteboard.",
+          description: "Append HTML content to the current visuals. Use this to add new sections as your explanation progresses.",
           parameters: {
             type: "object",
             properties: {
               html: {
                 type: "string",
-                description: "HTML content to append to the whiteboard.",
+                description: "HTML content to append. Always include IDs for new major elements to allow future updates.",
               },
             },
             required: ["html"],
@@ -82,7 +113,7 @@ function createSessionUpdate(whiteboardHtml) {
         {
           type: "function",
           name: "clear_whiteboard",
-          description: "Clear all content from the whiteboard.",
+          description: "Clear all visual content. Use this only when changing to a completely new topic.",
           parameters: {
             type: "object",
             properties: {},
@@ -141,10 +172,34 @@ function DebugPanel({ events, isSessionActive }) {
 
 function WhiteboardOutput({ whiteboardHtml, isLoading }) {
   const isWelcomeScreen = whiteboardHtml.includes("Welcome to AI Teaching Assistant");
+  const whiteboardRef = useRef(null);
+  
+  // Add animation class to elements that changed recently
+  useEffect(() => {
+    if (whiteboardRef.current) {
+      // Find all elements without highlight-update class
+      const allElements = whiteboardRef.current.querySelectorAll('*:not(.highlight-update)');
+      
+      // Add the highlight class to newly added or updated elements
+      allElements.forEach(el => {
+        if (el.id) {
+          el.classList.add('highlight-update');
+          
+          // Remove the class after the animation completes
+          setTimeout(() => {
+            if (el && el.classList) {
+              el.classList.remove('highlight-update');
+            }
+          }, 2000);
+        }
+      });
+    }
+  }, [whiteboardHtml]);
   
   return (
     <div className="relative w-full h-full">
       <div 
+        ref={whiteboardRef}
         className={`w-full h-full bg-white rounded-md p-4 overflow-y-auto border-2 ${
           isLoading ? 'border-blue-400 pulse-border' : 
           (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
@@ -153,7 +208,7 @@ function WhiteboardOutput({ whiteboardHtml, isLoading }) {
       />
       {isLoading ? (
         <div className="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">
-          Writing...
+          Visualizing...
         </div>
       ) : isWelcomeScreen ? (
         <div className="absolute top-2 right-2 bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full animate-pulse">
@@ -170,15 +225,15 @@ export default function ToolPanel({
   events,
 }) {
   const [toolsAdded, setToolsAdded] = useState(false);
-  const [whiteboardHtml, setWhiteboardHtml] = useState(`<div style="text-align:center; margin-top:20px;">
-  <h2 style="color:#2563eb; margin-bottom:15px;">Welcome to AI Teaching Assistant</h2>
-  <p style="font-size:1.1em; margin-bottom:20px;">I'm ready to help you learn any topic using this whiteboard.</p>
-  <div style="padding:10px; border:1px dashed #666; display:inline-block; text-align:left;">
-    <p><strong>How to get started:</strong></p>
-    <ol style="margin-top:5px; padding-left:20px;">
-      <li>Ask me to explain any concept or topic</li>
-      <li>I'll use this whiteboard to illustrate key points</li>
-      <li>Ask follow-up questions anytime</li>
+  const [whiteboardHtml, setWhiteboardHtml] = useState(`<div id="welcome-container" style="text-align:center; margin-top:20px;">
+  <h2 id="welcome-title" style="color:#2563eb; margin-bottom:15px;">Welcome to AI Teaching Assistant</h2>
+  <p id="welcome-intro" style="font-size:1.1em; margin-bottom:20px;">I'm ready to help you learn any topic with visual explanations.</p>
+  <div id="getting-started" style="padding:10px; border:1px dashed #666; display:inline-block; text-align:left;">
+    <p id="start-heading"><strong>How to get started:</strong></p>
+    <ol id="start-steps" style="margin-top:5px; padding-left:20px;">
+      <li id="step-1">Ask me to explain any concept or topic</li>
+      <li id="step-2">I'll provide visual elements to illustrate key points</li>
+      <li id="step-3">Ask follow-up questions anytime</li>
     </ol>
   </div>
 </div>`);
@@ -209,26 +264,33 @@ export default function ToolPanel({
           sendClientEvent({
             type: "session.update",
             session: {
-              instructions: `You are an AI Teaching Assistant who explains concepts using both voice and a whiteboard.
+              instructions: `You are an AI Teaching Assistant who explains concepts with a seamless integration of voice and visual elements.
               
 CRITICAL: DO NOT SPEAK FIRST! Wait for the user to ask a question or specify a topic before you begin teaching.
 
-TEACHING GUIDELINES (AFTER user has spoken):
-- Always use BOTH voice AND whiteboard together harmoniously
-- Speak naturally while writing key points on the whiteboard
-- First introduce topics verbally, then use the whiteboard to illustrate
-- Break complex topics into steps with visual organization
-- Verbally reference and explain what you write on the whiteboard
-- Use diagrams, bullet points, and visual elements on the whiteboard
+TEACHING APPROACH:
+- Begin with a brief verbal introduction to the topic
+- Create visual elements with structured organization to support your teaching
+- NEVER explicitly mention "the whiteboard" - treat visuals as a natural part of your explanation
+- Instead of "Let me show you on the whiteboard", just say "Let's look at this diagram" or "Here's how it works"
+- Refer to visual elements naturally as you explain concepts
 
-WHITEBOARD USAGE:
-- Use write_to_whiteboard for initial content or complete rewrites
-- Use add_to_whiteboard for building content incrementally
-- Use clear_whiteboard only when changing to a new topic entirely`
+TECHNICAL IMPLEMENTATION:
+- Use semantic HTML with IDs for all major elements
+- Structure your content with sections like <div id="introduction">, <div id="key-points">, etc.
+- Use consistent IDs like "main-concept", "definition", "examples", "steps", "summary"
+- Assign IDs to all major elements (e.g., <h2 id="subtopic">, <ul id="properties">)
+- This enables targeted updates to specific sections later
+
+VISUAL ELEMENT USAGE:
+- Use write_to_whiteboard for initial content or major changes
+- Use update_whiteboard_element to modify specific sections by their ID
+- Use add_to_whiteboard to append new content as you teach
+- Use clear_whiteboard only when changing to an entirely new topic`
             }
           });
           
-          // Then add an explicit system message for initial silence
+          // Then add an explicit system message for initial silence and proper behavior
           setTimeout(() => {
             sendClientEvent({
               type: "conversation.item.create",
@@ -238,7 +300,7 @@ WHITEBOARD USAGE:
                 content: [
                   {
                     type: "input_text",
-                    text: "IMPORTANT: Do not speak until the user asks a question or specifies a topic they want to learn about. Wait silently for user input."
+                    text: "IMPORTANT GUIDELINES:\n\n1. Do not speak until the user asks a question or specifies a topic\n\n2. Never explicitly mention 'the whiteboard' in your responses\n\n3. When creating content, always use HTML elements with proper ID attributes (e.g., <div id=\"concept\">, <h2 id=\"main-title\">)\n\n4. Use update_whiteboard_element to modify specific sections by their IDs\n\n5. Treat visual elements as a natural extension of your teaching"
                   }
                 ]
               }
@@ -274,8 +336,8 @@ WHITEBOARD USAGE:
           output.content.some(c => c.type === "text" || c.type === "audio")
         );
         
-        // If we have text but no function calls, and there's already teaching content on the whiteboard,
-        // we might need to prompt the AI to use the whiteboard
+        // If we have text but no function calls, and there are already visual elements,
+        // we might need to prompt the AI to update the visuals
         if (hasText && 
             !hasFunctionCalls && 
             !whiteboardHtml.includes("Welcome to AI Teaching Assistant") && 
@@ -290,7 +352,7 @@ WHITEBOARD USAGE:
                 content: [
                   {
                     type: "input_text",
-                    text: "Continue your explanation by updating the whiteboard to visualize what you're explaining. Make sure to use both your voice and the whiteboard together."
+                    text: "As you continue explaining, update the visual elements to match what you're discussing. Use the update_whiteboard_element tool to modify specific sections or add new visual components that help illustrate your points. Remember to never explicitly mention that you're using a whiteboard."
                   }
                 ]
               }
@@ -315,10 +377,10 @@ WHITEBOARD USAGE:
             
             switch (output.name) {
               case "write_to_whiteboard":
-                console.log("Writing to whiteboard:", args.html);
+                console.log("Writing new visual content:", args.html);
                 setWhiteboardHtml(args.html);
                 
-                // After writing to whiteboard, request AI to continue explanation with a direct response
+                // Continue explanation naturally without mentioning the whiteboard
                 setTimeout(() => {
                   sendClientEvent({
                     type: "conversation.item.create",
@@ -328,7 +390,55 @@ WHITEBOARD USAGE:
                       content: [
                         {
                           type: "input_text",
-                          text: "You've updated the whiteboard. Now continue your verbal explanation of what you've written. Speak naturally about the content you've just added to the whiteboard."
+                          text: "Continue your explanation naturally, referring to the visual elements you've just created. Explain these concepts in detail, but NEVER mention the whiteboard itself."
+                        }
+                      ]
+                    }
+                  });
+                  
+                  // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
+                }, 800);
+                break;
+                
+              case "update_whiteboard_element":
+                console.log("Updating specific element:", args.elementId);
+                
+                // Find and update the specified element
+                if (args.elementId) {
+                  // Create a temporary DOM element to parse and manipulate the HTML
+                  const tempDiv = document.createElement('div');
+                  tempDiv.innerHTML = whiteboardHtml;
+                  
+                  // Find the element with the specified ID
+                  const targetElement = tempDiv.querySelector(`#${args.elementId}`);
+                  
+                  if (targetElement) {
+                    // Update the element's content
+                    targetElement.innerHTML = args.html;
+                    setWhiteboardHtml(tempDiv.innerHTML);
+                    console.log(`Element #${args.elementId} updated successfully`);
+                  } else if (args.createIfNotExist) {
+                    // If element doesn't exist and createIfNotExist is true, append new element
+                    const newContent = `<div id="${args.elementId}">${args.html}</div>`;
+                    setWhiteboardHtml(prev => prev + newContent);
+                    console.log(`Element #${args.elementId} created and appended`);
+                  } else {
+                    console.warn(`Element with ID ${args.elementId} not found`);
+                  }
+                }
+                
+                // Continue explanation naturally
+                setTimeout(() => {
+                  sendClientEvent({
+                    type: "conversation.item.create",
+                    item: {
+                      type: "message",
+                      role: "system",
+                      content: [
+                        {
+                          type: "input_text",
+                          text: "Continue your explanation naturally, referring to the updated visual elements. Focus on the concepts and explain what these visuals represent without explicitly mentioning that they're on a whiteboard."
                         }
                       ]
                     }
@@ -340,10 +450,10 @@ WHITEBOARD USAGE:
                 break;
                 
               case "add_to_whiteboard":
-                console.log("Adding to whiteboard:", args.html);
+                console.log("Adding additional visual content");
                 setWhiteboardHtml(prev => prev + args.html);
                 
-                // After adding to whiteboard, request AI to continue explanation with a direct response
+                // Continue explanation naturally
                 setTimeout(() => {
                   sendClientEvent({
                     type: "conversation.item.create",
@@ -353,7 +463,7 @@ WHITEBOARD USAGE:
                       content: [
                         {
                           type: "input_text",
-                          text: "You've added content to the whiteboard. Now verbally explain this new content in detail to help the user understand what you've added."
+                          text: "Continue your explanation by elaborating on the new visual elements you've just added. Refer to them naturally in your teaching without mentioning that they're on a whiteboard."
                         }
                       ]
                     }
@@ -365,10 +475,10 @@ WHITEBOARD USAGE:
                 break;
                 
               case "clear_whiteboard":
-                console.log("Clearing whiteboard");
+                console.log("Clearing all visual content");
                 setWhiteboardHtml("");
                 
-                // After clearing whiteboard, prompt for new content with a direct response
+                // Continue with a new topic
                 setTimeout(() => {
                   sendClientEvent({
                     type: "conversation.item.create",
@@ -378,7 +488,7 @@ WHITEBOARD USAGE:
                       content: [
                         {
                           type: "input_text",
-                          text: "You've cleared the whiteboard. Now continue your teaching by first speaking about the topic, then writing a new outline on the whiteboard."
+                          text: "Now introduce the new topic verbally first, then create visual elements to support your explanation. Remember to never explicitly mention that you're using a whiteboard."
                         }
                       ]
                     }
@@ -407,18 +517,19 @@ WHITEBOARD USAGE:
   useEffect(() => {
     if (!isSessionActive) {
       setToolsAdded(false);
-      setWhiteboardHtml(`<div style="text-align:center; margin-top:20px;">
-  <h2 style="color:#2563eb; margin-bottom:15px;">Welcome to AI Teaching Assistant</h2>
-  <p style="font-size:1.1em; margin-bottom:20px;">I'm ready to help you learn any topic using this whiteboard.</p>
-  <div style="padding:10px; border:1px dashed #666; display:inline-block; text-align:left;">
-    <p><strong>How to get started:</strong></p>
-    <ol style="margin-top:5px; padding-left:20px;">
-      <li>Ask me to explain any concept or topic</li>
-      <li>I'll use this whiteboard to illustrate key points</li>
-      <li>Ask follow-up questions anytime</li>
+      setWhiteboardHtml(`<div id="welcome-container" style="text-align:center; margin-top:20px;">
+  <h2 id="welcome-title" style="color:#2563eb; margin-bottom:15px;">Welcome to AI Teaching Assistant</h2>
+  <p id="welcome-intro" style="font-size:1.1em; margin-bottom:20px;">I'm ready to help you learn any topic with visual explanations.</p>
+  <div id="getting-started" style="padding:10px; border:1px dashed #666; display:inline-block; text-align:left;">
+    <p id="start-heading"><strong>How to get started:</strong></p>
+    <ol id="start-steps" style="margin-top:5px; padding-left:20px;">
+      <li id="step-1">Ask me to explain any concept or topic</li>
+      <li id="step-2">I'll provide visual elements to illustrate key points</li>
+      <li id="step-3">Ask follow-up questions anytime</li>
     </ol>
   </div>
 </div>`);
+      setUserHasSpoken(false);
     }
   }, [isSessionActive]);
 
@@ -439,13 +550,12 @@ WHITEBOARD USAGE:
       console.log("User has spoken, enabling AI response");
       setUserHasSpoken(true);
       
-      // After the user speaks, send a follow-up instruction to reinforce the speaking pattern
-      // Instead of using session.update with meta, use response.create with instructions
+      // After the user speaks, send a follow-up instruction for a natural teaching response
       setTimeout(() => {
         sendClientEvent({
           type: "response.create",
           response: {
-            instructions: "The user has now asked a question. Please respond to their question using both your voice and the whiteboard. First introduce the topic verbally, then use the whiteboard to illustrate key points."
+            instructions: "The user has now asked a question. Please respond to their question with a natural teaching style that integrates visual elements seamlessly. Begin by introducing the topic verbally, then create visual elements to support your explanation. Never explicitly mention the whiteboard - just naturally refer to the visuals as part of your teaching."
           }
         });
       }, 500);

@@ -38,6 +38,24 @@ body {
   animation: pulse-border 2s ease-in-out infinite;
 }
 
+/* Animation for highlighting updated elements */
+@keyframes highlight-fade {
+  0% {
+    background-color: rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.highlight-update {
+  animation: highlight-fade 2s ease-out;
+  border-radius: 4px;
+  transition: all 0.5s ease-in-out;
+}
+
 /* Speech bubble for user input prompt */
 .input-prompt-container {
   position: absolute;
