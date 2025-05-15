@@ -1,91 +1,3 @@
-// Utility functions for handling whiteboard tool operations
-import { FUNCTION_NAMES, SYSTEM_MESSAGES } from "./constants";
-
-// Function to create session update with DOM manipulation tools
-export function createSessionUpdate(whiteboardHtml) {
-  return {
-    type: "session.update",
-    session: {
-      tools: [
-        {
-          type: "function",
-          name: FUNCTION_NAMES.write,
-          description:
-            "Replace the entire visual content with new HTML. Use this for initial content or complete overhauls. Always include semantic IDs for all major elements.",
-          parameters: {
-            type: "object",
-            properties: {
-              html: {
-                type: "string",
-                description:
-                  'HTML content to display. Use semantic HTML tags and include IDs for all major elements (e.g., <div id="intro">, <h2 id="main-concept">, etc.)',
-              },
-            },
-            required: ["html"],
-          },
-        },
-        {
-          type: "function",
-          name: FUNCTION_NAMES.update,
-          description:
-            "Update a specific element on the whiteboard by its ID. Use this to modify specific sections rather than the entire content.",
-          parameters: {
-            type: "object",
-            properties: {
-              elementId: {
-                type: "string",
-                description:
-                  'ID of the HTML element to update (e.g., "introduction", "main-concept", "examples", etc.)',
-              },
-              html: {
-                type: "string",
-                description:
-                  "New HTML content to replace within the selected element. Can include nested elements with their own IDs.",
-              },
-              createIfNotExist: {
-                type: "boolean",
-                description:
-                  "If true and the element doesn't exist, the content will be appended to the whiteboard with the given ID.",
-              },
-            },
-            required: ["elementId", "html"],
-          },
-        },
-        {
-          type: "function",
-          name: FUNCTION_NAMES.add,
-          description:
-            "Append HTML content to the current visuals. Use this to add new sections as your explanation progresses.",
-          parameters: {
-            type: "object",
-            properties: {
-              html: {
-                type: "string",
-                description:
-                  "HTML content to append. Always include IDs for new major elements to allow future updates.",
-              },
-            },
-            required: ["html"],
-          },
-        },
-        {
-          type: "function",
-          name: FUNCTION_NAMES.clear,
-          description:
-            "Clear all visual content. Use this only when changing to a completely new topic.",
-          parameters: {
-            type: "object",
-            properties: {},
-          },
-        },
-      ],
-      tool_choice: "auto",
-      instructions: whiteboardHtml,
-    },
-  };
-}
-
-// Send a system message followed by triggering a response
 export function sendSystemMessageAndResponse(sendClientEvent, message) {
   sendClientEvent({
     type: "conversation.item.create",
@@ -117,7 +29,9 @@ export function handleWriteToWhiteboard(
   // Continue explanation naturally without mentioning the whiteboard
   sendSystemMessageAndResponse(
     sendClientEvent,
-    SYSTEM_MESSAGES.continueExplanation,
+    `Continue your explanation naturally, referring to the visual elements you've just created. Explain these concepts in detail, but NEVER mention the whiteboard itself. You can also use the whiteboard to create new visual elements as you explain. Here is the whiteboard by the way:
+    ${args.html}
+    `,
   );
 }
 
@@ -129,6 +43,7 @@ export function handleUpdateWhiteboardElement(
   sendClientEvent,
 ) {
   console.log("Updating specific element:", args.elementId);
+  let newWhiteboardHTML = whiteboardHtml;
 
   // Find and update the specified element
   if (args.elementId) {
@@ -142,190 +57,43 @@ export function handleUpdateWhiteboardElement(
     if (targetElement) {
       // Update the element's content
       targetElement.innerHTML = args.html;
-      setWhiteboardHtml(tempDiv.innerHTML);
+      newWhiteboardHTML = tempDiv.innerHTML;
       console.log(`Element #${args.elementId} updated successfully`);
     } else if (args.createIfNotExist) {
       // If element doesn't exist and createIfNotExist is true, append new element
       const newContent = `<div id="${args.elementId}">${args.html}</div>`;
-      setWhiteboardHtml((prev) => prev + newContent);
+      newWhiteboardHTML = whiteboardHtml + newContent;
       console.log(`Element #${args.elementId} created and appended`);
     } else {
       console.warn(`Element with ID ${args.elementId} not found`);
     }
   }
+  setWhiteboardHtml(newWhiteboardHTML);
 
   // Continue explanation naturally
   sendSystemMessageAndResponse(
     sendClientEvent,
-    SYSTEM_MESSAGES.updateReference,
+    `Continue your explanation naturally, referring to the updated visual elements. Focus on the concepts and explain what these visuals represent without explicitly mentioning that they're on a whiteboard.
+     You can also update the whiteboard to support your response. Here is the whiteboard by the way:
+    ${newWhiteboardHTML}`,
   );
 }
 
 // Handle add_to_whiteboard function call
 export function handleAddToWhiteboard(
   args,
+  whiteboardHtml,
   setWhiteboardHtml,
   sendClientEvent,
 ) {
   console.log("Adding additional visual content");
-  setWhiteboardHtml((prev) => prev + args.html);
+  setWhiteboardHtml(whiteboardHtml + args.html);
 
   // Continue explanation naturally
-  sendSystemMessageAndResponse(sendClientEvent, SYSTEM_MESSAGES.elaborateNew);
-}
-
-// Handle clear_whiteboard function call
-export function handleClearWhiteboard(setWhiteboardHtml, sendClientEvent) {
-  console.log("Clearing all visual content");
-  setWhiteboardHtml("");
-
-  // Continue with a new topic
-  sendSystemMessageAndResponse(sendClientEvent, SYSTEM_MESSAGES.newTopic);
-}
-
-// Initialize session with tools and instructions
-export function initializeSession(
-  sendClientEvent,
-  setToolsAdded,
-  AI_WHITEBOARD_INSTRUCTIONS,
-  SESSION_INSTRUCTIONS,
-  SYSTEM_INSTRUCTIONS,
-) {
-  // First, register the tools
-  sendClientEvent(createSessionUpdate(AI_WHITEBOARD_INSTRUCTIONS));
-  setToolsAdded(true);
-  console.log("Tools registered with session");
-
-  // Update the session instructions
-  sendClientEvent({
-    type: "session.update",
-    session: {
-      instructions: SESSION_INSTRUCTIONS,
-    },
-  });
-
-  // Add an explicit system message for initial silence and proper behavior
-  sendClientEvent({
-    type: "conversation.item.create",
-    item: {
-      type: "message",
-      role: "system",
-      content: [
-        {
-          type: "input_text",
-          text: SYSTEM_INSTRUCTIONS,
-        },
-      ],
-    },
-  });
-
-  console.log("System instructions sent, waiting for user to speak...");
-}
-
-// Process function calls in a response
-export function processFunctionCallsInResponse(
-  output,
-  whiteboardHtml,
-  setWhiteboardHtml,
-  sendClientEvent,
-  setIsResponseComplete,
-) {
-  if (output.type !== "function_call") return;
-
-  console.log("Function call detected:", output.name);
-  setIsResponseComplete(false);
-
-  try {
-    const args = JSON.parse(output.arguments);
-
-    switch (output.name) {
-      case "write_to_whiteboard":
-        handleWriteToWhiteboard(args, setWhiteboardHtml, sendClientEvent);
-        break;
-
-      case "update_whiteboard_element":
-        handleUpdateWhiteboardElement(
-          args,
-          whiteboardHtml,
-          setWhiteboardHtml,
-          sendClientEvent,
-        );
-        break;
-
-      case "add_to_whiteboard":
-        handleAddToWhiteboard(args, setWhiteboardHtml, sendClientEvent);
-        break;
-
-      case "clear_whiteboard":
-        handleClearWhiteboard(setWhiteboardHtml, sendClientEvent);
-        break;
-
-      default:
-        console.log("Unknown function call:", output.name);
-    }
-
-    console.log("Whiteboard updated via function call");
-  } catch (error) {
-    console.error("Error processing function call:", error);
-  }
-}
-
-// Check if AI needs to be prompted to update visual content
-export function checkNeedForVisualPrompt(
-  hasText,
-  hasFunctionCalls,
-  whiteboardHtml,
-  sendClientEvent,
-) {
-  if (
-    hasText &&
-    !hasFunctionCalls &&
-    !whiteboardHtml.includes("Welcome to AI Teaching Assistant") &&
-    whiteboardHtml !== ""
-  ) {
-    // Use a system message followed by response.create for more reliable continuation
-    sendClientEvent({
-      type: "conversation.item.create",
-      item: {
-        type: "message",
-        role: "system",
-        content: [
-          {
-            type: "input_text",
-            text: SYSTEM_MESSAGES.promptUpdate,
-          },
-        ],
-      },
-    });
-
-    // Create a new response to continue the flow
-    sendClientEvent({ type: "response.create" });
-  }
-}
-
-// Detect when user first speaks and send appropriate instructions
-export function detectUserFirstMessage(
-  events,
-  userHasSpoken,
-  setUserHasSpoken,
-  sendClientEvent,
-) {
-  // Check for user message events
-  const userMessageEvent = events.find(
-    (event) =>
-      event.type === "conversation.item.create" && event.item?.role === "user",
+  sendSystemMessageAndResponse(
+    sendClientEvent,
+    `Continue your explanation by elaborating on the new visual elements you've just added. Refer to them naturally in your teaching without mentioning that they're on a whiteboard.
+    You can also update the whiteboard to support your response. Here is the whiteboard by the way:
+    ${whiteboardHtml + args.html}`,
   );
-
-  if (userMessageEvent && !userHasSpoken) {
-    console.log("User has spoken, enabling AI response");
-    setUserHasSpoken(true);
-
-    // After the user speaks, send a follow-up instruction for a natural teaching response
-    sendClientEvent({
-      type: "response.create",
-      response: {
-        instructions: SYSTEM_MESSAGES.userSpoken,
-      },
-    });
-  }
 }

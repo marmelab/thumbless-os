@@ -89,7 +89,7 @@ export default function App() {
       console.log("Local description set");
 
       const baseUrl = "https://api.openai.com/v1/realtime";
-      const model = "gpt-4o-realtime-preview-2024-12-17";
+      const model = "gpt-4o-mini-realtime-preview";
       
       // We'll send instructions via session messages later, not as headers
       console.log("Sending SDP request...");
@@ -151,24 +151,23 @@ export default function App() {
     peerConnection.current = null;
   }
 
-  // Send a message to the model
-  function sendClientEvent(message) {
+  // Send an event to the model
+  function sendClientEvent(event) {
     if (dataChannel) {
-      const timestamp = new Date().toLocaleTimeString();
-      message.event_id = message.event_id || crypto.randomUUID();
+      event.event_id = event.event_id || crypto.randomUUID();
 
       // send event before setting timestamp since the backend peer doesn't expect this field
-      dataChannel.send(JSON.stringify(message));
+      dataChannel.send(JSON.stringify(event));
 
       // if guard just in case the timestamp exists by miracle
-      if (!message.timestamp) {
-        message.timestamp = timestamp;
+      if (!event.timestamp) {
+        event.timestamp = new Date().toLocaleTimeString();
       }
-      setEvents((prev) => [message, ...prev]);
+      setEvents((prev) => [event, ...prev]);
     } else {
       console.error(
-        "Failed to send message - no data channel available",
-        message,
+        "Failed to send event - no data channel available",
+        event,
       );
     }
   }

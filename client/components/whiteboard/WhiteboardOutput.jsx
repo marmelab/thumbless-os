@@ -54,6 +54,10 @@ export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
         <div className="absolute top-2 right-2 bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full animate-pulse">
           Waiting for your question...
         </div>
+      ) : whiteboardHtml.trim() === "" ? (
+        <div className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded-full animate-pulse">
+          Waiting for visuals...
+        </div>
       ) : null}
     </div>
   );
