@@ -17,7 +17,7 @@ export const declareTools = () => ({
             html: {
               type: "string",
               description:
-                'HTML content to display. Use semantic HTML tags and include IDs for all major elements (e.g., <div id="intro">, <h2 id="main-concept">, etc.)',
+                'HTML content to display. Use semantic HTML tags and include IDs for all major elements (e.g., <div id="intro">, <h2 id="main-concept">, etc.). You can use tailwind CSS classes for styling.',
             },
           },
           required: ["html"],
@@ -95,6 +95,7 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Create organized lists (<ul id="key-points">, <ol id="procedure">) for steps or points
    - Use tables for comparing items or showing structured data
    - Use <div> with consistent styling for visual organization
+   - You can use Tailwind CSS classes for styling
 
 4. NEVER explicitly mention the whiteboard:
    - Instead of "Let me show you on the whiteboard", just say "Let's look at..." or "Here's how..."

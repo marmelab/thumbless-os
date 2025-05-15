@@ -28,25 +28,17 @@ export function useWhiteboardState(isSessionActive, sendClientEvent, events) {
       events,
       lastResponseId,
       setLastResponseId,
-      isResponseComplete,
       setIsResponseComplete,
       whiteboardHtml,
       setWhiteboardHtml,
       sendClientEvent,
     );
-  }, [
-    events,
-    lastResponseId,
-    isResponseComplete,
-    whiteboardHtml,
-    sendClientEvent,
-  ]);
+  }, [events, lastResponseId, whiteboardHtml, sendClientEvent]);
 
   // Reset state when session becomes inactive
   useEffect(() => {
     if (!isSessionActive) {
       setToolsAdded(false);
-      setWhiteboardHtml(WELCOME_HTML);
     }
   }, [isSessionActive]);
 

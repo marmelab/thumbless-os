@@ -13,8 +13,12 @@ export default function Screen({
   } = useWhiteboardState(isSessionActive, sendClientEvent, events);
 
   return (
-    <section className="absolute top-0 left-0 right-[380px] bottom-0 p-4 pt-0 flex justify-center items-start">
-      <div className="w-full max-w-[380px] h-full flex">
+    <section className="absolute top-0 left-0 right-[380px] bottom-0 p-4 pt-0 flex justify-center items-start" style={{
+      background: "url('/assets/colorful-abstract-wave-on-transparent-background.png')",
+      backgroundPositionY: 'center',
+      backgroundSize: '100% auto',
+    }}>
+      <div className="w-full max-w-[450px] h-full flex">
         <div className="flex-1 bg-white rounded-md ">
           {isSessionActive ? (
             <WhiteboardOutput

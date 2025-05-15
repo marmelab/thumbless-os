@@ -8,7 +8,6 @@ export function processToolCalls(
   events,
   lastResponseId,
   setLastResponseId,
-  isResponseComplete,
   setIsResponseComplete,
   whiteboardHtml,
   setWhiteboardHtml,
@@ -22,37 +21,18 @@ export function processToolCalls(
   );
   if (responseDoneEvents.length === 0) return;
 
-  const latestResponse = responseDoneEvents[0];
-  if (!latestResponse.response) return;
-  if (latestResponse.response.id === lastResponseId) return;
+  const response = responseDoneEvents[0];
+  if (!response.response) return;
+  if (response.response.id === lastResponseId) return;
+  if (!response.response?.output) return;
 
   // Process function calls in the response
-  processFunctionCallsInResponse(
-    latestResponse,
-    setIsResponseComplete,
-    whiteboardHtml,
-    setWhiteboardHtml,
-    sendClientEvent,
-  );
-  setLastResponseId(latestResponse.response.id);
-  setIsResponseComplete(true);
-}
-
-function processFunctionCallsInResponse(
-  response,
-  setIsResponseComplete,
-  whiteboardHtml,
-  setWhiteboardHtml,
-  sendClientEvent,
-) {
-  if (!response.response?.output) return;
 
   // Flag to track if we found and processed any function calls
   let foundFunctionCalls = false;
 
   response.response.output.forEach((output) => {
     if (output.type === "function_call") {
-      console.log("Function call detected:", output.name);
       foundFunctionCalls = true;
       setIsResponseComplete(false); // Response is ongoing when we see function calls
 
@@ -70,10 +50,6 @@ function processFunctionCallsInResponse(
         switch (output.name) {
           case "write_to_whiteboard":
             if (args.html) {
-              console.log(
-                "Writing to whiteboard with HTML:",
-                args.html.substring(0, 100) + "...",
-              );
               handleWriteToWhiteboard(args, setWhiteboardHtml, sendClientEvent);
             } else {
               console.error(
@@ -84,10 +60,6 @@ function processFunctionCallsInResponse(
 
           case "update_whiteboard_element":
             if (args.elementId && args.html) {
-              console.log(
-                `Updating element #${args.elementId} with HTML:`,
-                args.html.substring(0, 100) + "...",
-              );
               handleUpdateWhiteboardElement(
                 args,
                 whiteboardHtml,
@@ -103,10 +75,6 @@ function processFunctionCallsInResponse(
 
           case "add_to_whiteboard":
             if (args.html) {
-              console.log(
-                "Adding to whiteboard with HTML:",
-                args.html.substring(0, 100) + "...",
-              );
               handleAddToWhiteboard(
                 args,
                 whiteboardHtml,
@@ -121,8 +89,6 @@ function processFunctionCallsInResponse(
           default:
             console.log("Unknown function call:", output.name);
         }
-
-        console.log("Whiteboard updated via function call");
       } catch (error) {
         console.error("Error processing function call:", error);
       }
@@ -147,9 +113,6 @@ function processFunctionCallsInResponse(
     );
 
     if (hasTextContent) {
-      console.log(
-        "Response contains text but no visuals, prompting for visual content",
-      );
       sendClientEvent({
         type: "conversation.item.create",
         item: {
@@ -168,4 +131,6 @@ function processFunctionCallsInResponse(
       sendClientEvent({ type: "response.create" });
     }
   }
+  setLastResponseId(response.response.id);
+  setIsResponseComplete(true);
 }

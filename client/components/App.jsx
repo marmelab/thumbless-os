@@ -13,11 +13,9 @@ export default function App() {
 
   async function startSession() {
     try {
-      console.log("Starting session...");
       setSessionError(null);
 
       // Get a session token for OpenAI Realtime API
-      console.log("Fetching token...");
       const tokenResponse = await fetch("/token");
       const data = await tokenResponse.json();
 
@@ -28,10 +26,8 @@ export default function App() {
       }
 
       const EPHEMERAL_KEY = data.client_secret.value;
-      console.log("Token received successfully");
 
       // Create a peer connection
-      console.log("Creating RTCPeerConnection...");
       const pc = new RTCPeerConnection({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
       });
@@ -49,18 +45,15 @@ export default function App() {
       audioElement.current = document.createElement("audio");
       audioElement.current.autoplay = true;
       pc.ontrack = (e) => {
-        console.log("Track received:", e.track.kind);
         audioElement.current.srcObject = e.streams[0];
       };
 
       // Add local audio track for microphone input in the browser
       try {
-        console.log("Requesting microphone access...");
         const ms = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
         pc.addTrack(ms.getTracks()[0]);
-        console.log("Microphone track added");
       } catch (micError) {
         console.error("Microphone access error:", micError);
         setSessionError("Failed to access microphone. Please check permissions.");
@@ -68,7 +61,6 @@ export default function App() {
       }
 
       // Set up data channel for sending and receiving events
-      console.log("Creating data channel...");
       const dc = pc.createDataChannel("oai-events");
 
       dc.onopen = () => {
@@ -82,16 +74,13 @@ export default function App() {
       setDataChannel(dc);
 
       // Start the session using the Session Description Protocol (SDP)
-      console.log("Creating offer...");
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-      console.log("Local description set");
 
       const baseUrl = "https://api.openai.com/v1/realtime";
       const model = "gpt-4o-mini-realtime-preview";
 
       // We'll send instructions via session messages later, not as headers
-      console.log("Sending SDP request...");
       const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
         method: "POST",
         body: offer.sdp,
@@ -109,7 +98,6 @@ export default function App() {
         return;
       }
 
-      console.log("SDP response received");
       const sdpText = await sdpResponse.text();
 
       const answer = {
@@ -117,12 +105,9 @@ export default function App() {
         sdp: sdpText,
       };
 
-      console.log("Setting remote description...");
       await pc.setRemoteDescription(answer);
-      console.log("Remote description set");
 
       peerConnection.current = pc;
-      console.log("Session setup complete, waiting for data channel to open...");
     } catch (error) {
       console.error("Session setup error:", error);
       setSessionError(`Failed to start session: ${error.message}`);
