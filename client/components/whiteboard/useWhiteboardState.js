@@ -51,7 +51,6 @@ export function useWhiteboardState(isSessionActive, sendClientEvent, events) {
   }, [isSessionActive]);
 
   return {
-    toolsAdded,
     whiteboardHtml,
     isResponseComplete,
   };

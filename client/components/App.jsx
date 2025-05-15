@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "/assets/openai-logomark.svg";
-import EventLog from "./EventLog";
-import SessionControls from "./SessionControls";
-import ToolPanel from "./ToolPanel";
+import logo from "/assets/thumb-down.svg";
+import Screen from "./Screen";
+import { Debug } from "./debug/Debug";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -16,18 +15,18 @@ export default function App() {
     try {
       console.log("Starting session...");
       setSessionError(null);
-      
+
       // Get a session token for OpenAI Realtime API
       console.log("Fetching token...");
       const tokenResponse = await fetch("/token");
       const data = await tokenResponse.json();
-      
+
       if (!data.client_secret || !data.client_secret.value) {
         console.error("Invalid token response:", data);
         setSessionError("Failed to get a valid token. Check your API key.");
         return;
       }
-      
+
       const EPHEMERAL_KEY = data.client_secret.value;
       console.log("Token received successfully");
 
@@ -36,12 +35,12 @@ export default function App() {
       const pc = new RTCPeerConnection({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
       });
-      
+
       // Add connection state logging
       pc.oniceconnectionstatechange = () => {
         console.log("ICE connection state:", pc.iceConnectionState);
       };
-      
+
       pc.onconnectionstatechange = () => {
         console.log("Connection state:", pc.connectionState);
       };
@@ -71,15 +70,15 @@ export default function App() {
       // Set up data channel for sending and receiving events
       console.log("Creating data channel...");
       const dc = pc.createDataChannel("oai-events");
-      
+
       dc.onopen = () => {
         console.log("Data channel opened");
       };
-      
+
       dc.onerror = (err) => {
         console.error("Data channel error:", err);
       };
-      
+
       setDataChannel(dc);
 
       // Start the session using the Session Description Protocol (SDP)
@@ -90,7 +89,7 @@ export default function App() {
 
       const baseUrl = "https://api.openai.com/v1/realtime";
       const model = "gpt-4o-mini-realtime-preview";
-      
+
       // We'll send instructions via session messages later, not as headers
       console.log("Sending SDP request...");
       const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
@@ -102,7 +101,7 @@ export default function App() {
           "OpenAI-Beta": "assistants=v1", // Opt into the latest API behavior
         },
       });
-      
+
       if (!sdpResponse.ok) {
         const errorText = await sdpResponse.text();
         console.error("SDP response error:", sdpResponse.status, errorText);
@@ -112,12 +111,12 @@ export default function App() {
 
       console.log("SDP response received");
       const sdpText = await sdpResponse.text();
-      
+
       const answer = {
         type: "answer",
         sdp: sdpText,
       };
-      
+
       console.log("Setting remote description...");
       await pc.setRemoteDescription(answer);
       console.log("Remote description set");
@@ -216,36 +215,29 @@ export default function App() {
   return (
     <>
       <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
-        <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
+        <div className="flex items-center justify-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
           <img style={{ width: "24px" }} src={logo} />
-          <h1>realtime console</h1>
+          <h1>Thumbless OS</h1>
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
-        <section className="absolute top-0 left-0 right-[380px] bottom-0 flex">
-          <section className="absolute top-0 left-0 right-0 bottom-32 px-4 overflow-y-auto">
-            <EventLog events={events} />
-          </section>
-          <section className="absolute h-32 left-0 right-0 bottom-0 p-4">
-            <SessionControls
-              startSession={startSession}
-              stopSession={stopSession}
-              sendClientEvent={sendClientEvent}
-              sendTextMessage={sendTextMessage}
-              events={events}
-              isSessionActive={isSessionActive}
-              sessionError={sessionError}
-            />
-          </section>
-        </section>
-        <section className="absolute top-0 w-[380px] right-0 bottom-0 p-4 pt-0 overflow-y-auto">
-          <ToolPanel
-            sendClientEvent={sendClientEvent}
-            sendTextMessage={sendTextMessage}
-            events={events}
-            isSessionActive={isSessionActive}
-          />
-        </section>
+
+        <Screen
+          sendClientEvent={sendClientEvent}
+          sendTextMessage={sendTextMessage}
+          events={events}
+          isSessionActive={isSessionActive}
+        />
+
+        <Debug
+          startSession={startSession}
+          stopSession={stopSession}
+          sendClientEvent={sendClientEvent}
+          sendTextMessage={sendTextMessage}
+          events={events}
+          isSessionActive={isSessionActive}
+          sessionError={sessionError}
+        />
       </main>
     </>
   );
