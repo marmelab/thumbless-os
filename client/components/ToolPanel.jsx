@@ -203,19 +203,16 @@ export default function ToolPanel({
         setToolsAdded(true);
         console.log("Tools registered with session");
         
-        // Send instructions as a system message instead of a user message
+        // Send instructions as a system message to ensure the assistant behaves correctly
         setTimeout(() => {
-          // Use session.update with instructions instead
+          // First update the session instructions
           sendClientEvent({
             type: "session.update",
             session: {
               instructions: `You are an AI Teaching Assistant who explains concepts using both voice and a whiteboard.
               
-CRITICAL INSTRUCTIONS FOR CONVERSATION FLOW:
-- DO NOT SPEAK FIRST! Wait for the user to ask a question or specify a topic
-- NEVER initiate teaching without a user prompt
-- Remain silent until the user speaks first
-              
+CRITICAL: DO NOT SPEAK FIRST! Wait for the user to ask a question or specify a topic before you begin teaching.
+
 TEACHING GUIDELINES (AFTER user has spoken):
 - Always use BOTH voice AND whiteboard together harmoniously
 - Speak naturally while writing key points on the whiteboard
@@ -223,19 +220,32 @@ TEACHING GUIDELINES (AFTER user has spoken):
 - Break complex topics into steps with visual organization
 - Verbally reference and explain what you write on the whiteboard
 - Use diagrams, bullet points, and visual elements on the whiteboard
-- Structure content with clear headings and organized sections
 
 WHITEBOARD USAGE:
 - Use write_to_whiteboard for initial content or complete rewrites
 - Use add_to_whiteboard for building content incrementally
-- Use clear_whiteboard only when changing to a new topic entirely
-
-Remember: Stay silent until the user asks a question or specifies a topic they want to learn about.`,
+- Use clear_whiteboard only when changing to a new topic entirely`
             }
           });
           
-          // Do NOT automatically create a response - wait for user to speak first
-          console.log("System instructions sent, waiting for user to speak...");
+          // Then add an explicit system message for initial silence
+          setTimeout(() => {
+            sendClientEvent({
+              type: "conversation.item.create",
+              item: {
+                type: "message",
+                role: "system",
+                content: [
+                  {
+                    type: "input_text",
+                    text: "IMPORTANT: Do not speak until the user asks a question or specifies a topic they want to learn about. Wait silently for user input."
+                  }
+                ]
+              }
+            });
+            
+            console.log("System instructions sent, waiting for user to speak...");
+          }, 500);
         }, 1500);
       }, 1000);
     }
@@ -271,12 +281,23 @@ Remember: Stay silent until the user asks a question or specifies a topic they w
             !whiteboardHtml.includes("Welcome to AI Teaching Assistant") && 
             whiteboardHtml !== "") {
           setTimeout(() => {
+            // Use a system message followed by response.create for more reliable continuation
             sendClientEvent({
-              type: "response.create",
-              response: {
-                instructions: "Please continue your explanation using the whiteboard to illustrate key points. Remember to use both voice and visuals together."
+              type: "conversation.item.create",
+              item: {
+                type: "message",
+                role: "system",
+                content: [
+                  {
+                    type: "input_text",
+                    text: "Continue your explanation by updating the whiteboard to visualize what you're explaining. Make sure to use both your voice and the whiteboard together."
+                  }
+                ]
               }
             });
+            
+            // Create a new response to continue the flow
+            sendClientEvent({ type: "response.create" });
           }, 1500);
         }
         
@@ -297,14 +318,24 @@ Remember: Stay silent until the user asks a question or specifies a topic they w
                 console.log("Writing to whiteboard:", args.html);
                 setWhiteboardHtml(args.html);
                 
-                // After writing to whiteboard, request AI to continue explanation
+                // After writing to whiteboard, request AI to continue explanation with a direct response
                 setTimeout(() => {
                   sendClientEvent({
-                    type: "response.create",
-                    response: {
-                      instructions: "IMPORTANT: Continue explaining verbally what you've written on the whiteboard. Always use both voice and visuals together."
+                    type: "conversation.item.create",
+                    item: {
+                      type: "message",
+                      role: "system",
+                      content: [
+                        {
+                          type: "input_text",
+                          text: "You've updated the whiteboard. Now continue your verbal explanation of what you've written. Speak naturally about the content you've just added to the whiteboard."
+                        }
+                      ]
                     }
                   });
+                  
+                  // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
                 }, 800);
                 break;
                 
@@ -312,14 +343,24 @@ Remember: Stay silent until the user asks a question or specifies a topic they w
                 console.log("Adding to whiteboard:", args.html);
                 setWhiteboardHtml(prev => prev + args.html);
                 
-                // After adding to whiteboard, request AI to continue explanation
+                // After adding to whiteboard, request AI to continue explanation with a direct response
                 setTimeout(() => {
                   sendClientEvent({
-                    type: "response.create",
-                    response: {
-                      instructions: "IMPORTANT: Continue your verbal explanation based on what you've added to the whiteboard. Make sure to explain each point you've written."
+                    type: "conversation.item.create",
+                    item: {
+                      type: "message",
+                      role: "system",
+                      content: [
+                        {
+                          type: "input_text",
+                          text: "You've added content to the whiteboard. Now verbally explain this new content in detail to help the user understand what you've added."
+                        }
+                      ]
                     }
                   });
+                  
+                  // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
                 }, 800);
                 break;
                 
@@ -327,14 +368,24 @@ Remember: Stay silent until the user asks a question or specifies a topic they w
                 console.log("Clearing whiteboard");
                 setWhiteboardHtml("");
                 
-                // After clearing whiteboard, prompt for new content
+                // After clearing whiteboard, prompt for new content with a direct response
                 setTimeout(() => {
                   sendClientEvent({
-                    type: "response.create",
-                    response: {
-                      instructions: "Now continue with your explanation, using BOTH voice AND the whiteboard together. Start by introducing the topic verbally, then write an outline on the whiteboard."
+                    type: "conversation.item.create",
+                    item: {
+                      type: "message",
+                      role: "system",
+                      content: [
+                        {
+                          type: "input_text",
+                          text: "You've cleared the whiteboard. Now continue your teaching by first speaking about the topic, then writing a new outline on the whiteboard."
+                        }
+                      ]
                     }
                   });
+                  
+                  // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
                 }, 500);
                 break;
                 
@@ -388,14 +439,13 @@ Remember: Stay silent until the user asks a question or specifies a topic they w
       console.log("User has spoken, enabling AI response");
       setUserHasSpoken(true);
       
-      // After the user speaks, explicitly tell the AI it can respond
+      // After the user speaks, send a follow-up instruction to reinforce the speaking pattern
+      // Instead of using session.update with meta, use response.create with instructions
       setTimeout(() => {
         sendClientEvent({
-          type: "session.update",
-          session: {
-            meta: {
-              user_has_initiated_conversation: true
-            }
+          type: "response.create",
+          response: {
+            instructions: "The user has now asked a question. Please respond to their question using both your voice and the whiteboard. First introduce the topic verbally, then use the whiteboard to illustrate key points."
           }
         });
       }, 500);
@@ -411,18 +461,11 @@ Remember: Stay silent until the user asks a question or specifies a topic they w
     if (isSessionActive && toolsAdded && whiteboardHtml !== prevWhiteboardHtmlRef.current) {
       prevWhiteboardHtmlRef.current = whiteboardHtml;
       
-      // Update the model with the new whiteboard state
-      sendClientEvent({
-        type: "session.update",
-        session: {
-          meta: {
-            current_whiteboard_html: whiteboardHtml,
-            waiting_for_user_input: !userHasSpoken
-          }
-        }
-      });
+      // We don't need to update the model with the whiteboard state via session.update
+      // The model doesn't need to track this, and session.meta is not supported
+      console.log("Whiteboard content changed, but no need to send session update");
     }
-  }, [whiteboardHtml, isSessionActive, toolsAdded, sendClientEvent, userHasSpoken]);
+  }, [whiteboardHtml, isSessionActive, toolsAdded]);
 
   return (
     <section className="h-full w-full flex flex-col gap-4">
