@@ -15,6 +15,13 @@ export default function App() {
     try {
       setSessionError(null);
 
+      if (!import.meta.env.VITE_API_URL) {
+        setSessionError(
+          "VITE_API_URL environment variable is not set. Please make sure you created a client/.env file.",
+        );
+        return;
+      }
+
       // Get a session token for OpenAI Realtime API
       const tokenResponse = await fetch(`${import.meta.env.VITE_API_URL}/token`);
       const data = await tokenResponse.json();
