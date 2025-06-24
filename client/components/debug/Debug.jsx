@@ -12,7 +12,7 @@ export function Debug({
     sessionError
 }) {
     return (
-        <section className="absolute top-0 w-[380px] right-0 bottom-0 flex flex-col">
+        <section className="absolute top-0 w-[420px] right-0 bottom-0 flex flex-col">
             <section className="absolute h-18 left-0 right-0 top-0 pb-4">
                 <SessionControls
                     startSession={startSession}
