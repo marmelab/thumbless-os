@@ -15,8 +15,15 @@ export default function App() {
     try {
       setSessionError(null);
 
+      if (!import.meta.env.VITE_API_URL) {
+        setSessionError(
+          "VITE_API_URL environment variable is not set. Please make sure you created a client/.env file.",
+        );
+        return;
+      }
+
       // Get a session token for OpenAI Realtime API
-      const tokenResponse = await fetch("/token");
+      const tokenResponse = await fetch(`${import.meta.env.VITE_API_URL}/token`);
       const data = await tokenResponse.json();
 
       if (!data.client_secret || !data.client_secret.value) {
@@ -29,7 +36,7 @@ export default function App() {
 
       // Create a peer connection
       const pc = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       });
 
       // Add connection state logging
@@ -56,7 +63,9 @@ export default function App() {
         pc.addTrack(ms.getTracks()[0]);
       } catch (micError) {
         console.error("Microphone access error:", micError);
-        setSessionError("Failed to access microphone. Please check permissions.");
+        setSessionError(
+          "Failed to access microphone. Please check permissions.",
+        );
         return;
       }
 
@@ -99,7 +108,6 @@ export default function App() {
       }
 
       const sdpText = await sdpResponse.text();
-
       const answer = {
         type: "answer",
         sdp: sdpText,
@@ -149,10 +157,7 @@ export default function App() {
       }
       setEvents((prev) => [event, ...prev]);
     } else {
-      console.error(
-        "Failed to send event - no data channel available",
-        event,
-      );
+      console.error("Failed to send event - no data channel available", event);
     }
   }
 
@@ -182,6 +187,13 @@ export default function App() {
       // Append new server events to the list
       dataChannel.addEventListener("message", (e) => {
         const event = JSON.parse(e.data);
+        if (
+          event.type === "response.done" &&
+          event.response &&
+          event.response?.status === "failed"
+        ) {
+          console.error("Data channel error:", event.response.status_details);
+        }
         if (!event.timestamp) {
           event.timestamp = new Date().toLocaleTimeString();
         }
@@ -206,7 +218,6 @@ export default function App() {
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
-
         <Screen
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}

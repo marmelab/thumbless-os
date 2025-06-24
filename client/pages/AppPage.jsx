@@ -1,5 +1,5 @@
 import App from "../components/App";
 
-export default function Index() {
+export const AppPage = () => {
   return <App />;
-}
+};
