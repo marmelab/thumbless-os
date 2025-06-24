@@ -18,12 +18,19 @@ export default function Screen({
     events,
   );
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isModelSpeaking, setIsModelSpeaking] = useState(false);
 
   useEffect(() => {
-    if (events[0] && events[0].type === "conversation.item.created")
+    if (events[0] && events[0].type === "conversation.item.created") {
       setIsProcessing(true);
-    if (events[0] && events[0].type === "output_audio_buffer.started")
+    }
+    if (events[0] && events[0].type === "output_audio_buffer.started") {
       setIsProcessing(false);
+      setIsModelSpeaking(true);
+    }
+    if (events[0] && events[0].type === "output_audio_buffer.stopped") {
+      setIsModelSpeaking(false);
+    }
   }, [events]);
 
   return (
