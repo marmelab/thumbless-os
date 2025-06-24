@@ -51,9 +51,7 @@ export default function Screen({
                 toggleMicrophone={toggleMicrophone}
               />
               <div>
-                {!isMicrophoneActive && (
-                  <SendMessage sendTextMessage={sendTextMessage} />
-                )}
+                <SendMessage sendTextMessage={sendTextMessage} />
               </div>
             </div>
           </div>
