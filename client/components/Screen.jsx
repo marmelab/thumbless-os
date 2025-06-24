@@ -12,6 +12,7 @@ export default function Screen({
   state,
   isMicrophoneActive,
   sendTextMessage,
+  toggleMicrophone,
 }) {
   // Use our custom hook for whiteboard state management
   const { whiteboardHtml, isResponseComplete } = useWhiteboardState(
@@ -46,6 +47,8 @@ export default function Screen({
                 answerStream={answerStream}
                 state={state}
                 isSessionActive={isSessionActive}
+                isMicrophoneActive={isMicrophoneActive}
+                toggleMicrophone={toggleMicrophone}
               />
               <div>
                 {!isMicrophoneActive && (
@@ -55,7 +58,7 @@ export default function Screen({
             </div>
           </div>
         ) : (
-          <div className="h-full bg-gray-50 rounded-md border-2 border-gray-300 p-4 flex items-center justify-center">
+          <div className="w-full h-full bg-gray-50 rounded-md border-2 border-gray-300 p-4 flex items-center justify-center">
             <p>Start the session to use the assistant...</p>
           </div>
         )}

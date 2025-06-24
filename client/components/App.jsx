@@ -15,7 +15,7 @@ export default function App() {
   const [sessionError, setSessionError] = useState(null);
   const [answerStream, setAnswerStream] = useState(null);
   const [questionStream, setQuestionStream] = useState(null);
-  const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
+  const [isMicrophoneActive, setIsMicrophoneActive] = useState(true);
 
   useEffect(() => {
     if(!questionStream) {
@@ -283,6 +283,7 @@ export default function App() {
           questionStream={questionStream}
           answerStream={answerStream}
           isMicrophoneActive={isMicrophoneActive}
+          toggleMicrophone={toggleMicrophone}
         />
         <Debug
           startSession={startSession}
