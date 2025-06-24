@@ -2,6 +2,7 @@ import {
   handleWriteToWhiteboard,
   handleUpdateWhiteboardElement,
   handleAddToWhiteboard,
+  handleSendEmail,
 } from "./utils";
 
 export function processToolCalls(
@@ -83,6 +84,19 @@ export function processToolCalls(
               );
             } else {
               console.error("Missing html argument in add_to_whiteboard call");
+            }
+            break;
+
+          case "send_email":
+            if ((args.to, args.from, args.subject, args.body)) {
+              handleSendEmail(
+                args,
+                whiteboardHtml,
+                setWhiteboardHtml,
+                sendClientEvent,
+              );
+            } else {
+              console.error("Missing arguments in send_email call");
             }
             break;
 

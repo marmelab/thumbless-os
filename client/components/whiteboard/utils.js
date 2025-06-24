@@ -97,3 +97,26 @@ export function handleAddToWhiteboard(
     ${whiteboardHtml + args.html}`,
   );
 }
+
+// Handle sending an email function call
+export function handleSendEmail(
+  args,
+  whiteboardHtml,
+  setWhiteboardHtml,
+  sendClientEvent,
+) {
+  console.log("Sending email:", args);
+
+  handleAddToWhiteboard(
+    {
+      html: `
+      <p>Email envoyé à ${args.to} par ${args.from} avec le sujet "${args.subject}". 
+      <br/>
+      <span>${args.body}</span></p>
+      `,
+    },
+    whiteboardHtml,
+    setWhiteboardHtml,
+    sendClientEvent,
+  );
+}

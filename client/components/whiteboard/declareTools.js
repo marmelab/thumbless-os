@@ -67,6 +67,34 @@ export const declareTools = (profile) => ({
           required: ["html"],
         },
       },
+      {
+        type: "function",
+        name: FUNCTION_NAMES.email,
+        description:
+          "Send an email to a given recipient with a given sender, subject and message.",
+        parameters: {
+          type: "object",
+          properties: {
+            from: {
+              type: "string",
+              description: "The sender email address.",
+            },
+            to: {
+              type: "string",
+              description: "The recipient email address.",
+            },
+            subject: {
+              type: "string",
+              description: "Email subject line.",
+            },
+            body: {
+              type: "string",
+              description: "Body of the email message.",
+            },
+          },
+          required: ["to", "subject", "body", "from"],
+        },
+      },
     ],
     tool_choice: "auto",
     instructions: `You are an AI Assistant embedded in a chat application. For every user message, you must respond by calling at least one of the predefined functions, even if the user message is conversational or vague.
