@@ -24,11 +24,8 @@ export function Debug({
                     sessionError={sessionError}
                 />
             </section>
-            <section className="absolute top-14 left-0 right-0 bottom-24 px-4 overflow-y-auto">
+            <section className="absolute top-14 left-0 right-0 bottom-4 px-4 overflow-y-auto">
                 <EventLog events={events} />
-            </section>
-            <section className="absolute bottom-0 left-0 right-0 p-4">
-                {isSessionActive && <SendMessage sendTextMessage={sendTextMessage} />}
             </section>
         </section>
     );

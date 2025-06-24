@@ -6,7 +6,5 @@ help:
 install: ## install dependencies
 	npm install
 
-start: ## start the applicatoin
+run: ## run the applicatoin
 	npm run dev
-
-run: start
