@@ -4,10 +4,12 @@ This is a POC for a realtime voice-based mobile OS using the [OpenAI Realtime AP
 
 ## Installation and usage
 
-Before you begin, you'll need an OpenAI API key - [create one in the dashboard here](https://platform.openai.com/settings/api-keys). Create a `.env` file from the example file and set your API key in there:
+Before you begin, you'll need to initialize two `.env` files, one for the SPA and another for the server. You'll also need an OpenAI API key - [create one in the dashboard here](https://platform.openai.com/settings/api-keys):
 
 ```bash
+# SPA env file
 cp ./client/.env.example ./client/.env
+# Server env file. Paste your OpenAI API key in it
 cp .env.example .env
 ```
 
