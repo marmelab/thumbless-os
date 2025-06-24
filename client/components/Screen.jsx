@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { ModelIndicator } from "./ModelIndicator";
-import { UserIndicator } from "./UserIndicator";
 import WhiteboardOutput from "./whiteboard/WhiteboardOutput";
 import { useWhiteboardState } from "./whiteboard/useWhiteboardState";
+import { ActivityIndicator } from './ActivityIndicator';
 
 export default function Screen({
   isSessionActive,
@@ -10,6 +9,7 @@ export default function Screen({
   events,
   questionStream,
   answerStream,
+  state,
 }) {
   // Use our custom hook for whiteboard state management
   const { whiteboardHtml, isResponseComplete } = useWhiteboardState(
@@ -17,13 +17,8 @@ export default function Screen({
     sendClientEvent,
     events,
   );
-  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    if (events[0] && events[0].type === "conversation.item.created")
-      setIsProcessing(true);
-    if (events[0] && events[0].type === "output_audio_buffer.started")
-      setIsProcessing(false);
   }, [events]);
 
   return (
@@ -40,13 +35,6 @@ export default function Screen({
         <div className="flex-1 bg-white rounded-md">
           {true ? (
             <div className="w-full h-full text-lg flex flex-col">
-              <div className="flex justify-center">
-                <ModelIndicator
-                  audioStream={answerStream}
-                  isSessionActive={true}
-                  isProcessing={isProcessing}
-                />
-              </div>
               <WhiteboardOutput
                 whiteboardHtml={whiteboardHtml}
                 isLoading={!isResponseComplete}
@@ -54,11 +42,8 @@ export default function Screen({
                 answerStream={answerStream}
                 questionStream={questionStream}
               />
-              <div className="flex justify-center">
-                <UserIndicator
-                  audioStream={questionStream}
-                  isSessionActive={true}
-                />
+              <div className="absolute flex  bottom-0 left-1/2 right-1/2 transform -translate-x-1/2 flex-col items-center justify-center gap-2 p-4">  
+                  <ActivityIndicator questionStream={questionStream} answerStream={answerStream} state={state} isSessionActive={isSessionActive} />
               </div>
             </div>
           ) : (
@@ -71,5 +56,3 @@ export default function Screen({
     </section>
   );
 }
-
-// All helper functions have been moved to utility files
