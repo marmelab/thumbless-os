@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { saveProfile } from "../profile";
+import { useEffect, useRef } from "react";
+import { getProfile, saveProfile } from "../profile";
 import { useNavigate } from "react-router";
 
 export const SettingsPage = () => {
@@ -14,8 +14,20 @@ export const SettingsPage = () => {
         navigate("/", { replace: true });
     }
 
+    const nameInputRef = useRef();
     const locationRef = useRef();
+    const locationAccessRef = useRef();
     const locationInputRef = useRef();
+
+    useEffect(() => {
+        const profile = getProfile();
+        nameInputRef.current.value = profile?.name || "";
+        locationInputRef.current.value = profile?.location || "";
+        if (profile?.location) {
+            locationRef.current.textContent = `Your location is: ${profile.location}`;
+            locationAccessRef.current.checked = true;
+        };
+    }, []);
     const handleLocationAccessChange = async (event) => {
         if (event.currentTarget.checked) {
             const position = await getCurrentPosition()
@@ -53,6 +65,7 @@ export const SettingsPage = () => {
                     <div className="mb-4">
                         <label className="block text-sm font-medium mb-2" htmlFor="name">Name</label>
                         <input
+                            ref={nameInputRef}
                             type="text"
                             id="name"
                             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -62,6 +75,7 @@ export const SettingsPage = () => {
                     <div className="mb-4">
                         <label className="inline-flex items-center">
                             <input
+                                ref={locationAccessRef}
                                 name="allowLocation"
                                 type="checkbox"
                                 className="h-5 w-5 text-blue-600"
