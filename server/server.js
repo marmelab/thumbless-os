@@ -3,6 +3,8 @@ import "dotenv/config";
 import express from "express";
 import { handleWebSearch } from "./webSearch.js";
 
+import mailer from "./mailer.js";
+
 const app = express();
 const port = process.env.PORT || 3000;
 const apiKey = process.env.OPENAI_API_KEY;
@@ -10,6 +12,8 @@ const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY;
 const unsplashUrl = process.env.UNSPLASH_API_SEARCH_URL;
 
 app.use(cors());
+
+app.use(express.json());
 
 // API route for token generation
 app.get("/token", async (req, res) => {
@@ -122,6 +126,43 @@ app.get("/web-search", async (req, res) => {
     res
       .status(500)
       .json({ error: "Failed to perform web search", message: error.message });
+  }
+});
+
+app.post("/email", async (req, res) => {
+  const { to, from, subject, body } = req.body;
+
+  if (!to || !from || !subject || !body) {
+    return res.status(400).json({
+      error: "Missing required fields: to, from, subject, body",
+    });
+  }
+
+  try {
+    const result = mailer.send(to, from, subject, body);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    console.error("Email sending error:", error);
+    res.status(500).json({ error: "Failed to send email" });
+  }
+});
+
+// Render the React client
+app.use("*", async (req, res, next) => {
+  const url = req.originalUrl;
+
+  try {
+    const template = await vite.transformIndexHtml(
+      url,
+      fs.readFileSync("./client/index.html", "utf-8"),
+    );
+    const { render } = await vite.ssrLoadModule("./client/entry-server.jsx");
+    const appHtml = await render(url);
+    const html = template.replace(`<!--ssr-outlet-->`, appHtml?.html);
+    res.status(200).set({ "Content-Type": "text/html" }).end(html);
+  } catch (e) {
+    vite.ssrFixStacktrace(e);
+    next(e);
   }
 });
 

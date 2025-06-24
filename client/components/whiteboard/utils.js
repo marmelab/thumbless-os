@@ -99,13 +99,23 @@ export function handleAddToWhiteboard(
 }
 
 // Handle sending an email function call
-export function handleSendEmail(
+export async function handleSendEmail(
   args,
   whiteboardHtml,
   setWhiteboardHtml,
   sendClientEvent,
 ) {
   console.log("Sending email:", args);
+
+  const emailResult = await fetch("/email", {
+    method: "POST",
+    body: JSON.stringify(args),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  console.log(await emailResult.json());
 
   handleAddToWhiteboard(
     {
