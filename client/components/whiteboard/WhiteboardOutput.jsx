@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
-import { SoundVisualizer } from "../SoundVisualizer";
 
-export default function WhiteboardOutput({ whiteboardHtml, isLoading, questionStream, answerStream, isSessionActive }) {
+export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
     const isWelcomeScreen = whiteboardHtml.includes("Welcome to AI Teaching Assistant");
     const whiteboardRef = useRef(null);
 
