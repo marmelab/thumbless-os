@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import logo from "/assets/thumb-down.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
@@ -9,9 +9,10 @@ export default function App() {
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+  const audioAnalyzer = useRef(null);
   const [sessionError, setSessionError] = useState(null);
 
-  async function startSession() {
+  const startSession = useCallback(async function startSession() {
     try {
       setSessionError(null);
 
@@ -60,6 +61,13 @@ export default function App() {
         const ms = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
+        const audioCtx = new AudioContext();
+        const analyzer = audioCtx.createAnalyser();
+        const source = audioCtx.createMediaStreamSource(ms);
+        source.connect(analyzer);
+        analyzer.fftSize = 128;
+        audioAnalyzer.current = analyzer;
+        
         pc.addTrack(ms.getTracks()[0]);
       } catch (micError) {
         console.error("Microphone access error:", micError);
@@ -119,7 +127,44 @@ export default function App() {
       console.error("Session setup error:", error);
       setSessionError(`Failed to start session: ${error.message}`);
     }
-  }
+  }, [
+    setSessionError,
+    setDataChannel,
+    setIsSessionActive,
+    audioElement,
+    peerConnection,
+    isSessionActive,
+  ])
+
+  useEffect(() => {
+    if(!audioAnalyzer.current || !isSessionActive) {
+      return;
+    }
+    const analyzer = audioAnalyzer.current;
+    const frequencyData = new Uint8Array(analyzer.frequencyBinCount);
+
+    let requestAnimationFrameId;
+
+    function analyzeFrequencyData() {
+      if (!isSessionActive) {
+        return;
+      }
+      analyzer.getByteFrequencyData(frequencyData);
+     requestAnimationFrameId = requestAnimationFrame(analyzeFrequencyData);
+    }
+    analyzeFrequencyData();
+
+    return () => {
+      if (requestAnimationFrameId) {
+        cancelAnimationFrame(requestAnimationFrameId);
+      }
+    }
+  }, [
+    audioAnalyzer,
+    isSessionActive
+  ])
+
+  console.log({isSessionActive})
 
   // Stop current session, clean up peer connection and data channel
   function stopSession() {
@@ -213,7 +258,6 @@ export default function App() {
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
-
         <Screen
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
