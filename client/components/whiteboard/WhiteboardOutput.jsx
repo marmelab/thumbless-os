@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
+import { SoundVisualizer } from "../SoundVisualizer";
 
-export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
+export default function WhiteboardOutput({ whiteboardHtml, isLoading, questionStream, answerStream, isSessionActive }) {
     const isWelcomeScreen = whiteboardHtml.includes("Welcome to AI Teaching Assistant");
     const whiteboardRef = useRef(null);
 
@@ -38,9 +39,10 @@ export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
 
     return (
         <div className="relative w-full h-full text-lg">
+            <SoundVisualizer audioStream={answerStream} isSessionActive={isSessionActive} />
             <div
                 ref={whiteboardRef}
-                className={`w-full h-full bg-white rounded-md p-4 overflow-y-auto border-2 ${isLoading ? 'border-blue-400 pulse-border' :
+                className={`w-full bg-white rounded-md p-4 overflow-y-auto border-2 align-center ${isLoading ? 'border-blue-400 pulse-border' :
                     (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
                     }`}
                 dangerouslySetInnerHTML={{ __html: whiteboardHtml }}
@@ -58,6 +60,7 @@ export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
                     Waiting for visuals...
                 </div>
             ) : null}
+            <SoundVisualizer audioStream={questionStream} isSessionActive={isSessionActive} />
         </div>
     );
 }

@@ -1,11 +1,14 @@
 import WhiteboardOutput from './whiteboard/WhiteboardOutput';
 import { useWhiteboardState } from './whiteboard/useWhiteboardState';
 import { Foreground } from './Foreground';
+import { SoundVisualizer } from './SoundVisualizer';
 
 export default function Screen({
   isSessionActive,
   sendClientEvent,
   events,
+  questionStream,
+  answerStream,
 }) {
   // Use our custom hook for whiteboard state management
   const {
@@ -20,12 +23,14 @@ export default function Screen({
       backgroundSize: '100% auto',
     }}>
       <div className="w-full max-w-[450px] h-full flex relative">
-        <Foreground />
-        <div className="flex-1 bg-white rounded-md ">
+        <div className="flex-1 bg-white rounded-md">
           {isSessionActive ? (
             <WhiteboardOutput
               whiteboardHtml={whiteboardHtml}
               isLoading={!isResponseComplete}
+              isSessionActive={isSessionActive}
+              answerStream={answerStream}
+              questionStream={questionStream}
             />
           ) : (
             <div className="h-full bg-gray-50 rounded-md border-2 border-gray-300 p-4 flex items-center justify-center">
