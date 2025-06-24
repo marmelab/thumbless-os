@@ -1,27 +1,28 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "node server.js --dev",
+    "dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "node server.js --dev",
+    "dev:client": "vite dev",
     "start": "node server.js",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build --outDir dist/client --ssrManifest",
-    "build:server": "vite build --outDir dist/server --ssr /index.js",
-    "devinstall": "zx ../../devinstall.mjs -- node server.js --dev",
+    "build:client": "vite build --ssrManifest",
+    "build:server": "rm -rf dist/server && mkdir -p dist/server && cp server.js dist/server/server.js && cp package.json dist/server/package.json",
     "lint": "eslint . --ext .js,.jsx --fix"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "history": "^5.3.0",
-    "minipass": "^7.1.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-feather": "^2.0.10",
-    "react-router-dom": "^7.6.2"
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.10",
     "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^9.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-feather": "^2.0.10",
+    "react-router-dom": "^7.6.2",
     "tailwindcss": "^4.1.10",
     "vite": "^6.3.5"
   }

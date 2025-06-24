@@ -16,7 +16,7 @@ export default function App() {
       setSessionError(null);
 
       // Get a session token for OpenAI Realtime API
-      const tokenResponse = await fetch("/token");
+      const tokenResponse = await fetch(`${import.meta.env.VITE_API_URL}/token`);
       const data = await tokenResponse.json();
 
       if (!data.client_secret || !data.client_secret.value) {
