@@ -4,7 +4,6 @@ import { Link } from "react-router";
 import logo from "/assets/thumb-down.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
-import { SoundVisualizer } from "./SoundVisualizer";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -12,7 +11,6 @@ export default function App() {
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
-  const audioAnalyzer = useRef(null);
   const [sessionError, setSessionError] = useState(null);
   const [answerStream, setAnswerStream] = useState(null);
   const [questionStream, setQuestionStream] = useState(null);
@@ -247,15 +245,14 @@ export default function App() {
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
-        <SoundVisualizer audioStream={answerStream} isSessionActive={isSessionActive} />
         <Screen
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
           events={events}
           isSessionActive={isSessionActive}
+          questionStream={questionStream}
+          answerStream={answerStream}
         />
-        <SoundVisualizer audioStream={questionStream} isSessionActive={isSessionActive} />
-
         <Debug
           startSession={startSession}
           stopSession={stopSession}

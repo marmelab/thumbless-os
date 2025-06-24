@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-const width = 200;
-const height = 200;
+const width = 128;
+const height = 128;
 
 const bars = 64;
 const bar_width = 1;
@@ -82,8 +82,6 @@ export const SoundVisualizer = ({ isSessionActive, audioStream }) => {
   }, [audioStream, canvasRef.current, isSessionActive]);
 
   return (
-    <div>
-      <canvas ref={canvasRef} width="200" height="200"></canvas>
-    </div>
+    <canvas ref={canvasRef} width={width} height={height}></canvas>
   );
 };
