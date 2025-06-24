@@ -92,15 +92,18 @@ export default function App() {
       const model = "gpt-4o-mini-realtime-preview";
 
       // We'll send instructions via session messages later, not as headers
-      const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
-        method: "POST",
-        body: offer.sdp,
-        headers: {
-          Authorization: `Bearer ${EPHEMERAL_KEY}`,
-          "Content-Type": "application/sdp",
-          "OpenAI-Beta": "assistants=v1", // Opt into the latest API behavior
+      const sdpResponse = await fetch(
+        `${baseUrl}?model=${model}&max_token=100`,
+        {
+          method: "POST",
+          body: offer.sdp,
+          headers: {
+            Authorization: `Bearer ${EPHEMERAL_KEY}`,
+            "Content-Type": "application/sdp",
+            "OpenAI-Beta": "assistants=v1", // Opt into the latest API behavior
+          },
         },
-      });
+      );
 
       if (!sdpResponse.ok) {
         const errorText = await sdpResponse.text();
@@ -110,7 +113,6 @@ export default function App() {
       }
 
       const sdpText = await sdpResponse.text();
-      console.log("Received SDP response:", sdpText);
       const answer = {
         type: "answer",
         sdp: sdpText,
