@@ -131,6 +131,10 @@ export default function App() {
       dataChannel.close();
     }
 
+    if (!peerConnection.current) {
+      return;
+    }
+
     peerConnection.current.getSenders().forEach((sender) => {
       if (sender.track) {
         sender.track.stop();
@@ -210,6 +214,8 @@ export default function App() {
         setEvents([]);
       });
     }
+
+    return () => stopSession();
   }, [dataChannel]);
 
   return (
