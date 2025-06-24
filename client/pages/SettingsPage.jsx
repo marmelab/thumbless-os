@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { saveProfile } from "../profile";
 import { useNavigate } from "react-router";
 
-export const OnboardingPage = () => {
+export const SettingsPage = () => {
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -40,14 +40,13 @@ export const OnboardingPage = () => {
     }
 
     const handleSkip = () => {
-        saveProfile({ name: "", location: "" });
         // If the user skips, we can just navigate to the main page
         navigate("/", { replace: true });
     }
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-            <h1 className="text-3xl font-bold mb-4">Welcome !</h1>
+            <h1 className="text-3xl font-bold mb-4">Settings</h1>
             <p className="text-lg mb-6">Tell us about yourself:</p>
             <div className="w-full md:1/2 lg:1/3 p-6">
                 <form className=" bg-white p-6 rounded shadow-md" onSubmit={handleSubmit}>
