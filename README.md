@@ -7,6 +7,7 @@ This is a POC for a realtime voice-based mobile OS using the [OpenAI Realtime AP
 Before you begin, you'll need an OpenAI API key - [create one in the dashboard here](https://platform.openai.com/settings/api-keys). Create a `.env` file from the example file and set your API key in there:
 
 ```bash
+cp ./client/.env.example ./client/.env
 cp .env.example .env
 ```
 
