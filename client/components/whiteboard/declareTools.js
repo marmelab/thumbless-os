@@ -8,6 +8,21 @@ export const declareTools = (profile) => ({
     tools: [
       {
         type: "function",
+        name: FUNCTION_NAMES.fetch_url,
+        description: "Fetches a webpage and converts its content into markdown.",
+        parameters: {
+          type: "object",
+          properties: {
+            url: {
+              type: "string",
+              description: "The URL of the page to fetch",
+            },
+          },
+          required: ["url"],
+        },
+      },
+      {
+        type: "function",
         name: FUNCTION_NAMES.write,
         description:
           "Replace the entire visual content with new HTML. Use this for initial content or visual overhauls. Always include semantic IDs for all major elements.",
