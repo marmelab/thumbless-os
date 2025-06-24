@@ -9,9 +9,8 @@ export const ActivityIndicator = ({
   questionStream: MediaStream;
   answerStream: MediaStream;
   isSessionActive: boolean;
-  state: "asking" | "processing" | "idle" | "answering";
+  state: "asking" | "processing" | "answering";
 }) => {
-  console.log({ state });
   return (
     <div className="relative">
       {state === "asking" && (
@@ -28,10 +27,17 @@ export const ActivityIndicator = ({
           alt="Processing Icon"
         />
       )}
-      <SoundVisualizer
-        audioStream={state === "asking" ? questionStream : answerStream}
-        isSessionActive={isSessionActive}
-      />
+      {state === "answering" ? (
+        <SoundVisualizer
+          audioStream={answerStream}
+          isSessionActive={isSessionActive}
+        />
+      ) : (
+        <SoundVisualizer
+          audioStream={questionStream}
+          isSessionActive={isSessionActive}
+        />
+      )}
     </div>
   );
 };
