@@ -108,7 +108,6 @@ export default function App() {
       }
 
       const sdpText = await sdpResponse.text();
-      console.log("Received SDP response:", sdpText);
       const answer = {
         type: "answer",
         sdp: sdpText,
