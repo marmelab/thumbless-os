@@ -8,7 +8,7 @@ import { Debug } from "./debug/Debug";
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
-  const [state, setState] = useState("idle");
+  const [state, setState] = useState("asking");
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
@@ -142,6 +142,7 @@ export default function App() {
 
   // Stop current session, clean up peer connection and data channel
   function stopSession() {
+    setState("asking");
     if (dataChannel) {
       dataChannel.close();
     }
@@ -208,7 +209,8 @@ export default function App() {
     if (dataChannel) {
       // Append new server events to the list
       dataChannel.addEventListener("message", (e) => {
-        switch (e.type) {
+        const event = JSON.parse(e.data);
+        switch (event.type) {
           case 'conversation.item.created':
             setState('processing');
             break;
@@ -216,11 +218,7 @@ export default function App() {
             setState('answering');
             break;
           case 'output_audio_buffer.stopped':
-            setState('asking');
-            break;
           case 'input_audio_buffer.speech_started':
-            setState('asking');
-            break;
           case 'input_audio_buffer.speech_ended':
             setState('asking');
             break;
@@ -228,8 +226,6 @@ export default function App() {
             // do nothing
         }
 
-    
-        const event = JSON.parse(e.data);
         if (
           event.type === "response.done" &&
           event.response &&
