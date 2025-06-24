@@ -39,6 +39,12 @@ export const OnboardingPage = () => {
         }
     }
 
+    const handleSkip = () => {
+        saveProfile({ name: "", location: "" });
+        // If the user skips, we can just navigate to the main page
+        navigate("/", { replace: true });
+    }
+
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
             <h1 className="text-3xl font-bold mb-4">Welcome !</h1>
@@ -67,12 +73,21 @@ export const OnboardingPage = () => {
                     </div>
                     <input ref={locationInputRef} type="hidden" name="location" value="" />
                     <p className="mb-4 text-sm" ref={locationRef}></p>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200"
-                    >
-                        Submit
-                    </button>
+                    <div className="flex flex-col gap-4 md:flex-row">
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200"
+                        >
+                            Submit
+                        </button>
+                        <button
+                            type="button"
+                            className="w-full py-2 rounded hover:bg-blue-600 hover:text-white transition duration-200"
+                            onClick={handleSkip}
+                        >
+                            Skip
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

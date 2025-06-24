@@ -1,5 +1,5 @@
-export const saveProfile = ({ name, location }) => {
-    window.localStorage.setItem("profile", JSON.stringify({ name, location }));
+export const saveProfile = (profile) => {
+    window.localStorage.setItem("profile", JSON.stringify(profile));
 }
 
 export const getProfile = () => {
