@@ -27,17 +27,10 @@ export const ActivityIndicator = ({
           alt="Processing Icon"
         />
       )}
-      {state === "answering" ? (
-        <SoundVisualizer
-          audioStream={answerStream}
-          isSessionActive={isSessionActive}
-        />
-      ) : (
-        <SoundVisualizer
-          audioStream={questionStream}
-          isSessionActive={isSessionActive}
-        />
-      )}
+      <SoundVisualizer
+        audioStream={state === "answering" ? answerStream : questionStream}
+        isSessionActive={isSessionActive}
+      />
     </div>
   );
 };
