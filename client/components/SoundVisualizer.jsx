@@ -9,8 +9,7 @@ const radius = 0;
 const center_x = width / 2;
 const center_y = height / 2;
 
-function drawBar(x1 = 0, y1 = 0, x2 = 0, y2 = 0, frequency, ctx, gradient) {
-  ctx.fillStyle = gradient;
+function drawBar(x1 = 0, y1 = 0, x2 = 0, y2 = 0, frequency, ctx) {
 
   const lineColor = "rgb(" + frequency + ", " + frequency + ", " + 205 + ")";
   ctx.strokeStyle = lineColor;
@@ -26,9 +25,6 @@ function animationLooper(canvas, frequencyArray) {
   canvas.height = height;
 
   const ctx = canvas.getContext("2d");
-  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  gradient.addColorStop(0, "rgba(35, 7, 77, 1)");
-  gradient.addColorStop(1, "rgba(204, 83, 51, 1)");
 
   const rads = (Math.PI * 2) / bars;
 
@@ -40,7 +36,7 @@ function animationLooper(canvas, frequencyArray) {
     const x_end = center_x + Math.cos(rads * i) * (radius + bar_height);
     const y_end = center_y + Math.sin(rads * i) * (radius + bar_height);
 
-    drawBar(x, y, x_end, y_end, frequencyArray[i], ctx, gradient);
+    drawBar(x, y, x_end, y_end, frequencyArray[i], ctx);
   }
 }
 
