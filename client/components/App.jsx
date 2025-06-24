@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import logo from "/assets/thumb-down.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
+import { SoundVisualizer } from "./SoundVisualizer";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -11,6 +12,8 @@ export default function App() {
   const audioElement = useRef(null);
   const audioAnalyzer = useRef(null);
   const [sessionError, setSessionError] = useState(null);
+  const [answerStream, setAnswerStream] = useState(null);
+  const [questionStream, setQuestionStream] = useState(null);
 
   const startSession = useCallback(async function startSession() {
     try {
@@ -54,6 +57,7 @@ export default function App() {
       audioElement.current.autoplay = true;
       pc.ontrack = (e) => {
         audioElement.current.srcObject = e.streams[0];
+        setAnswerStream(e.streams[0]);
       };
 
       // Add local audio track for microphone input in the browser
@@ -61,12 +65,7 @@ export default function App() {
         const ms = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
-        const audioCtx = new AudioContext();
-        const analyzer = audioCtx.createAnalyser();
-        const source = audioCtx.createMediaStreamSource(ms);
-        source.connect(analyzer);
-        analyzer.fftSize = 128;
-        audioAnalyzer.current = analyzer;
+        setQuestionStream(ms);
         
         pc.addTrack(ms.getTracks()[0]);
       } catch (micError) {
@@ -136,36 +135,6 @@ export default function App() {
     peerConnection,
     isSessionActive,
   ])
-
-  useEffect(() => {
-    if(!audioAnalyzer.current || !isSessionActive) {
-      return;
-    }
-    const analyzer = audioAnalyzer.current;
-    const frequencyData = new Uint8Array(analyzer.frequencyBinCount);
-
-    let requestAnimationFrameId;
-
-    function analyzeFrequencyData() {
-      if (!isSessionActive) {
-        return;
-      }
-      analyzer.getByteFrequencyData(frequencyData);
-     requestAnimationFrameId = requestAnimationFrame(analyzeFrequencyData);
-    }
-    analyzeFrequencyData();
-
-    return () => {
-      if (requestAnimationFrameId) {
-        cancelAnimationFrame(requestAnimationFrameId);
-      }
-    }
-  }, [
-    audioAnalyzer,
-    isSessionActive
-  ])
-
-  console.log({isSessionActive})
 
   // Stop current session, clean up peer connection and data channel
   function stopSession() {
@@ -263,12 +232,14 @@ export default function App() {
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
+        <SoundVisualizer audioStream={answerStream} isSessionActive={isSessionActive} />
         <Screen
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
           events={events}
           isSessionActive={isSessionActive}
         />
+        <SoundVisualizer audioStream={questionStream} isSessionActive={isSessionActive} />
 
         <Debug
           startSession={startSession}
