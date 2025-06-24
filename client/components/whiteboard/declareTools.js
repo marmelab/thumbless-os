@@ -71,7 +71,7 @@ export const declareTools = (profile) => ({
         type: "function",
         name: FUNCTION_NAMES.email,
         description:
-          "Send an email to a given recipient with a given sender, subject and message.",
+          "You are a specialised mailing agent connected to my mailbox. Send an email to a given recipient with a given sender, subject and message.",
         parameters: {
           type: "object",
           properties: {
