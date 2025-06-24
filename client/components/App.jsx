@@ -6,6 +6,7 @@ import { Debug } from "./debug/Debug";
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
+  const [state, setState] = useState("asking");
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
@@ -135,6 +136,7 @@ export default function App() {
 
   // Stop current session, clean up peer connection and data channel
   function stopSession() {
+    setState("asking");
     if (dataChannel) {
       dataChannel.close();
     }
@@ -201,6 +203,23 @@ export default function App() {
       // Append new server events to the list
       dataChannel.addEventListener("message", (e) => {
         const event = JSON.parse(e.data);
+        switch (event.type) {
+          case 'conversation.item.created':
+            setState('processing');
+            break;
+          case 'output_audio_buffer.started':
+            setState('answering');
+            break;
+          case 'output_audio_buffer.stopped':
+          case 'input_audio_buffer.speech_started':
+          case 'input_audio_buffer.speech_ended':
+            setState('asking');
+            break;
+          default:
+            // do nothing
+        }
+
+    
         if (!event.timestamp) {
           event.timestamp = new Date().toLocaleTimeString();
         }
@@ -226,6 +245,7 @@ export default function App() {
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
         <Screen
+          state={state}
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
           events={events}
