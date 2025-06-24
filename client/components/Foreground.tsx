@@ -1,6 +1,6 @@
 export const Foreground = () => {
-  const isSpeaking = false; // TODO: Replace with actual speaking state logic
-  const isProcessing = false; // TODO: Replace with actual processing state logic
+  const isSpeaking = true; // TODO: Replace with actual speaking state logic
+  const isProcessing = true; // TODO: Replace with actual processing state logic
 
   return (
     <>
