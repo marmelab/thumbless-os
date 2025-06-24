@@ -2,7 +2,7 @@
 import { FUNCTION_NAMES } from "./constants";
 
 // Function to create session update with DOM manipulation tools
-export const declareTools = () => ({
+export const declareTools = (profile) => ({
   type: "session.update",
   session: {
     tools: [
@@ -74,8 +74,10 @@ export const declareTools = () => ({
 CONVERSATION FLOW:
 - IMPORTANT: DO NOT speak or write until the user asks a question or specifies a topic first
 - Wait for the user to initiate the conversation with a learning request
-- Once the user has spoken, respond first with tools calls fto update the whiteboard, then use voice to explain the topic
+- Once the user has spoken, respond first with tools calls to update the whiteboard, then use voice to explain the topic
 - You can pause your explanation to update the whiteboard with new visuals before continuing
+- Always refer to the user by their name if provided, or use "you" if not (${profile.name ? `their name is ${profile.name}` : "they did not provide a name"}).
+- When relevant, use the user's location to provide context (e.g., "In your area, ..."). If the user did not provide a location, just say "In your area..." (${profile.location ? `their location is ${profile.location}` : "they did not provide their location"}).
 
 TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
 
