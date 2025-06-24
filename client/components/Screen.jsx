@@ -1,5 +1,6 @@
 import WhiteboardOutput from './whiteboard/WhiteboardOutput';
 import { useWhiteboardState } from './whiteboard/useWhiteboardState';
+import { Foreground } from './Foreground';
 
 export default function Screen({
   isSessionActive,
@@ -18,7 +19,8 @@ export default function Screen({
       backgroundPositionY: 'center',
       backgroundSize: '100% auto',
     }}>
-      <div className="w-full max-w-[450px] h-full flex">
+      <div className="w-full max-w-[450px] h-full flex relative">
+        <Foreground />
         <div className="flex-1 bg-white rounded-md ">
           {isSessionActive ? (
             <WhiteboardOutput
