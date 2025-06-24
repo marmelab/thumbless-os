@@ -1,10 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @theme {
     --font-serif: "Nunito", sans-serif;
     --font-sans: "Nunito", sans-serif; 
