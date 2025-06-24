@@ -262,6 +262,12 @@ export default function App() {
     return () => stopSession();
   }, [dataChannel]);
 
+  useEffect(() => {
+    window.userReply = (message) => {
+      sendTextMessage(message);
+    }
+  }, []);
+
   return (
     <>
       <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">

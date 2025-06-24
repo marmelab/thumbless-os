@@ -119,6 +119,7 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Use id attributes for all major elements (e.g., <div id="intro">, <section id="steps">, etc.)
    - Use headings (<h1 id="main-title">, <h2 id="subtopic">, etc.) for clear section breaks
    - Create organized lists (<ul id="key-points">, <ol id="procedure">) for steps or points
+   - Always wrap each step or point with a link that calls the userReply function with the topic (this function is available globally in the window object), allowing the user to ask for more details on that point
    - Use tables for comparing items or showing structured data
    - Use <div> with consistent styling for visual organization
    - You can use Tailwind CSS classes for styling
@@ -129,11 +130,11 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Speak as if the visual content is naturally appearing alongside your explanation
    - Treat the visual elements as an extension of your teaching, not a separate tool
 
-Examples of good HTML:
+Examples of good HTML (note that it includes links that call the userReply function which is available in the client):
 <h2 style="color:#2563eb">Main Concept</h2>
 <ul>
-  <li><strong>Key Point 1:</strong> 💡 Explanation...</li>
-  <li><strong>Key Point 2:</strong> Explanation...</li>
+  <li><a href="#" onClick="userReply('tell me more about Key Point 1')"><strong></a>Key Point 1:</strong> 💡 Explanation...</li>
+  <li><a href="#" onClick="userReply('tell me more about Key Point 2')"><strong></a>Key Point 2:</strong> Explanation...</li>
 </ul>
 <hr>
 <div style="margin:10px 0">Additional information here...</div>
