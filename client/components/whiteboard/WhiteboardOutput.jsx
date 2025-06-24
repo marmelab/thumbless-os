@@ -43,7 +43,7 @@ export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
                 className={`w-full h-full bg-white rounded-md p-4 overflow-y-auto border-2 ${isLoading ? 'border-blue-400 pulse-border' :
                     (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
                     }`}
-                dangerouslySetInnerHTML={{ __html: `<section class="prose prose-slate lg:prose-m">${whiteboardHtml}</section>` }}
+                dangerouslySetInnerHTML={{ __html: `<div class="prose prose-slate lg:prose-m">${whiteboardHtml}</div>` }}
             />
             {isLoading ? (
                 <div className="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">

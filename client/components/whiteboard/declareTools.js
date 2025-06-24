@@ -105,6 +105,7 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Treat the visual elements as an extension of your teaching, not a separate tool
 
 Examples of good HTML: 
+<section class="prose lg:prose-l">
 <h1>Main Concept</h1>
 <h2>Secondary idea</h2>
 <ul>
@@ -114,6 +115,7 @@ Examples of good HTML:
 <hr>
 <h3>Additional information here...</h3>
 <p>This is a paragraph with <strong>important</strong> details.</p>
+</section>
 `,
   },
 });
