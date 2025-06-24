@@ -17,6 +17,17 @@ export default function App() {
   const [questionStream, setQuestionStream] = useState(null);
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
 
+  useEffect(() => {
+    if(!questionStream) {
+      return;
+    }
+    questionStream.getTracks()[0].enabled = isMicrophoneActive;
+  },[questionStream, isMicrophoneActive])
+
+  const toggleMicrophone = useCallback(() => {
+    setIsMicrophoneActive((prev) => !prev);
+  }, [setIsMicrophoneActive]);
+
   const startSession = useCallback(async function startSession() {
     try {
       setSessionError(null);
@@ -68,7 +79,6 @@ export default function App() {
           audio: true,
         });
         setQuestionStream(ms);
-        
         pc.addTrack(ms.getTracks()[0]);
       } catch (micError) {
         console.error("Microphone access error:", micError);
