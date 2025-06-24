@@ -33,7 +33,7 @@ export default function Screen({
     >
       <div className="w-full max-w-[450px] h-full flex relative">
         <div className="flex-1 bg-white rounded-md">
-          {true ? (
+          {isSessionActive ? (
             <div className="w-full h-full text-lg flex flex-col">
               <WhiteboardOutput
                 whiteboardHtml={whiteboardHtml}
