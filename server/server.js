@@ -140,7 +140,11 @@ app.post("/email", async (req, res) => {
 
   try {
     const result = mailer.send(to, from, subject, body);
-    res.status(200).json({ message: result });
+    res
+      .status(200)
+      .json({
+        message: result ? "Email sent successfully" : "Failed to send email",
+      });
   } catch (error) {
     console.error("Email sending error:", error);
     res.status(500).json({ error: "Failed to send email" });
