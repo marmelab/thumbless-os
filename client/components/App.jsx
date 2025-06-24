@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Link as LinkIcon, Settings as SettingsIcon } from "react-feather";
+import { Link } from "react-router";
 import logo from "/assets/thumb-down.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
@@ -131,6 +133,10 @@ export default function App() {
       dataChannel.close();
     }
 
+    if (!peerConnection.current) {
+      return;
+    }
+
     peerConnection.current.getSenders().forEach((sender) => {
       if (sender.track) {
         sender.track.stop();
@@ -210,6 +216,8 @@ export default function App() {
         setEvents([]);
       });
     }
+
+    return () => stopSession();
   }, [dataChannel]);
 
   return (
@@ -218,6 +226,10 @@ export default function App() {
         <div className="flex items-center justify-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
           <img style={{ width: "24px" }} src={logo} />
           <h1>Thumbless OS</h1>
+          <Link to="/settings" className="ml-auto" title="Settings">
+            <span className="sr-only">Settings</span>
+            <SettingsIcon size={24} />
+          </Link>
         </div>
       </nav>
       <main className="absolute top-16 left-0 right-0 bottom-0">
