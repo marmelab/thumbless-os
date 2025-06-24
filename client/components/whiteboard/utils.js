@@ -107,7 +107,7 @@ export async function handleSendEmail(
 ) {
   console.log("Sending email:", args);
 
-  const emailResult = await fetch("/email", {
+  const emailResult = await fetch(`${import.meta.env.VITE_API_URL}/email`, {
     method: "POST",
     body: JSON.stringify(args),
     headers: {

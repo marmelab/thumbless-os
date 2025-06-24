@@ -62,33 +62,12 @@ app.post("/email", async (req, res) => {
 
   try {
     const result = mailer.send(to, from, subject, body);
-    res
-      .status(200)
-      .json({
-        message: result ? "Email sent successfully" : "Failed to send email",
-      });
+    res.status(200).json({
+      message: result ? "Email sent successfully" : "Failed to send email",
+    });
   } catch (error) {
     console.error("Email sending error:", error);
     res.status(500).json({ error: "Failed to send email" });
-  }
-});
-
-// Render the React client
-app.use("*", async (req, res, next) => {
-  const url = req.originalUrl;
-
-  try {
-    const template = await vite.transformIndexHtml(
-      url,
-      fs.readFileSync("./client/index.html", "utf-8"),
-    );
-    const { render } = await vite.ssrLoadModule("./client/entry-server.jsx");
-    const appHtml = await render(url);
-    const html = template.replace(`<!--ssr-outlet-->`, appHtml?.html);
-    res.status(200).set({ "Content-Type": "text/html" }).end(html);
-  } catch (e) {
-    vite.ssrFixStacktrace(e);
-    next(e);
   }
 });
 
