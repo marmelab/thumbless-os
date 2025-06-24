@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-const width = 128;
-const height = 128;
+const width = 100;
+const height = 100;
 
 const bars = 64;
 const bar_width = 1;
@@ -30,11 +30,9 @@ function animationLooper(canvas, frequencyArray) {
   gradient.addColorStop(0, "rgba(35, 7, 77, 1)");
   gradient.addColorStop(1, "rgba(204, 83, 51, 1)");
 
-  for (var i = 0; i < bars; i++) {
-    //divide a circle into equal part
-    const rads = (Math.PI * 2) / bars;
+  const rads = (Math.PI * 2) / bars;
 
-    // Math is magical
+  for (var i = 0; i < bars; i++) {
     const bar_height = frequencyArray[i] / 3;
 
     const x = center_x + Math.cos(rads * i) * radius;
@@ -42,7 +40,6 @@ function animationLooper(canvas, frequencyArray) {
     const x_end = center_x + Math.cos(rads * i) * (radius + bar_height);
     const y_end = center_y + Math.sin(rads * i) * (radius + bar_height);
 
-    //draw a bar
     drawBar(x, y, x_end, y_end, frequencyArray[i], ctx, gradient);
   }
 }
