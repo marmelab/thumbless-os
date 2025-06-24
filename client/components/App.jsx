@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link as LinkIcon, Settings as SettingsIcon } from "react-feather";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import logo from "/assets/thumb-down.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
