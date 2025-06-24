@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { WELCOME_HTML } from "./constants";
 import { declareTools } from "./declareTools";
 import { processToolCalls } from "./processToolCalls";
+import { getProfile } from "../../profile";
 
 export function useWhiteboardState(isSessionActive, sendClientEvent, events) {
   const [toolsAdded, setToolsAdded] = useState(false);
@@ -16,8 +17,9 @@ export function useWhiteboardState(isSessionActive, sendClientEvent, events) {
     const sessionCreatedEvent = events.find(
       (event) => event.type === "session.created",
     );
+    const profile = getProfile();
     if (!sessionCreatedEvent) return;
-    sendClientEvent(declareTools());
+    sendClientEvent(declareTools(profile));
     setToolsAdded(true);
   }, [events, toolsAdded, sendClientEvent]);
 
