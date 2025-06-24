@@ -9,7 +9,8 @@ export const declareTools = (profile) => ({
       {
         type: "function",
         name: FUNCTION_NAMES.search,
-        description: "Performs an internet search using a search engine with the given query.",
+        description:
+          "Performs an internet search using a search engine with the given query.",
         parameters: {
           type: "object",
           properties: {
@@ -84,19 +85,46 @@ export const declareTools = (profile) => ({
       },
       {
         type: "function",
-          name: FUNCTION_NAMES.image,
-          description:
-            "Search Unsplash for a relevant image. Returns a direct image URL. After receiving the URL, use it in your next whiteboard update by including an <img src='...'> tag in your HTML. When generating a list with images, always place each <img> tag inside its corresponding <li>, directly below the item description.",
-          parameters: {
-            type: "object",
-            properties: {
-              query: {
-                type: "string",
-                description: "The search term for the Unsplash image.",
-              },
+        name: FUNCTION_NAMES.image,
+        description:
+          "Search Unsplash for a relevant image. Returns a direct image URL. After receiving the URL, use it in your next whiteboard update by including an <img src='...'> tag in your HTML. When generating a list with images, always place each <img> tag inside its corresponding <li>, directly below the item description.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: {
+              type: "string",
+              description: "The search term for the Unsplash image.",
             },
-            required: ["query"],
           },
+          required: ["query"],
+        },
+      },
+      {
+        name: FUNCTION_NAMES.email,
+        description:
+          "Send an email to a given recipient with a given sender, subject and message.",
+        parameters: {
+          type: "object",
+          properties: {
+            from: {
+              type: "string",
+              description: "The sender email address.",
+            },
+            to: {
+              type: "string",
+              description: "The recipient email address.",
+            },
+            subject: {
+              type: "string",
+              description: "Email subject line.",
+            },
+            body: {
+              type: "string",
+              description: "Body of the email message.",
+            },
+          },
+          required: ["to", "subject", "body", "from"],
+        },
       },
     ],
     tool_choice: "auto",

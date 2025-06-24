@@ -2,6 +2,7 @@ import { handleWebSearch } from "../../tools/webSearch";
 import { FUNCTION_NAMES } from "./constants";
 import {
   handleAddToWhiteboard,
+  handleSendEmail,
   handleUpdateWhiteboardElement,
   handleWriteToWhiteboard,
 } from "./utils";
@@ -167,13 +168,21 @@ export function processToolCalls(
 
           case FUNCTION_NAMES.search:
             if (args.query) {
-              handleWebSearch(
-                args.query,
-                output.call_id,
+              handleWebSearch(args.query, output.call_id, sendClientEvent);
+            } else {
+              console.error("Missing query argument in web_search call");
+            }
+            break;
+          case "send_email":
+            if ((args.to, args.from, args.subject, args.body)) {
+              handleSendEmail(
+                args,
+                whiteboardHtml,
+                setWhiteboardHtml,
                 sendClientEvent,
               );
             } else {
-              console.error("Missing query argument in web_search call");
+              console.error("Missing arguments in send_email call");
             }
             break;
 
