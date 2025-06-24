@@ -18,9 +18,6 @@ export default function Screen({
     events,
   );
 
-  useEffect(() => {
-  }, [events]);
-
   return (
     <section
       className="absolute top-0 left-0 right-[380px] bottom-0 p-4 pt-0 flex justify-center items-start"
