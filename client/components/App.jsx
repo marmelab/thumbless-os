@@ -218,7 +218,7 @@ export default function App() {
         <div className="flex items-center justify-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
           <img style={{ width: "24px" }} src={logo} />
           <h1>Thumbless OS</h1>
-          <Link to="/settings" className="ml-auto">
+          <Link to="/settings" className="ml-auto" title="Settings">
             <span className="sr-only">Settings</span>
             <SettingsIcon size={24} />
           </Link>
