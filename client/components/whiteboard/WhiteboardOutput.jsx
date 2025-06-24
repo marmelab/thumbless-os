@@ -42,7 +42,7 @@ export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
             className={`w-full grow bg-white rounded-md p-4 overflow-y-auto border-2 align-center ${isLoading ? 'border-blue-400 pulse-border' :
                 (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
                 }`}
-            dangerouslySetInnerHTML={{ __html: whiteboardHtml }}
+            dangerouslySetInnerHTML={{ __html: `<div class="prose prose-slate lg:prose-m">${whiteboardHtml}</div>` }}
         />
     );
 }

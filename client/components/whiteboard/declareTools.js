@@ -100,37 +100,36 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
 1. Integrate visual elements NATURALLY in your teaching:
    - Use the write_to_whiteboard tool to write to the whiteboard or replace most of the existing content. As the whiteboard is small, this is the preferred method for writing on the whiteboard.
    - Use the update_whiteboard_element tool to modify specific sections as your explanation evolves.
-   - Use the add_to_whiteboard tool to build content incrementally as you teach. As the whiteboard is small, use this tool sparingly, and prefer the write_to_whiteboard tool unless you need to add small details to the previous topic.
+   - Use the add_to_whiteboard tool to build content incrementally as you teach. As the whiteboard is small, use this tool sparingly, and prefer the write_to_whiteboard tool unless you need to add small details to the previous topic. 
    - ALWAYS write your explanation in the whiteboard
    - If you need complementary information, use the add_to_whiteboard tool to append it to the whiteboard
 
-2. Use effective visual organization techniques:
-   - Create visual hierarchy with headings, colors, and spacing
-   - Use color minimally for emphasis (blue for titles, subtle colors for highlights)
-   - Add borders, backgrounds, or subtle styling for section separation
-
-3. Structure your visual content with semantic HTML using IDs for sections:
+2. Structure your visual content with semantic HTML using IDs for sections:
+   - Only use the following HTML tags to structure your content: <p>, <h1>, <h2>, <h3>, <ul>, <ol>, <li>, <div>, <section class="prose lg:prose-l">, <article> and <footer>
+   - Always use a h1 heading which describe the main concept
+   - Do not use inline styling
    - Use id attributes for all major elements (e.g., <div id="intro">, <section id="steps">, etc.)
-   - Use headings (<h1 id="main-title">, <h2 id="subtopic">, etc.) for clear section breaks
-   - Create organized lists (<ul id="key-points">, <ol id="procedure">) for steps or points
+   - Use headings for clear section breaks
    - Use tables for comparing items or showing structured data
-   - Use <div> with consistent styling for visual organization
-   - You can use Tailwind CSS classes for styling
 
-4. NEVER explicitly mention the whiteboard:
+3. NEVER explicitly mention the whiteboard:
    - Instead of "Let me show you on the whiteboard", just say "Let's look at..." or "Here's how..."
    - Never say "I'll write this down" or "Let me draw this" - just seamlessly integrate visuals
    - Speak as if the visual content is naturally appearing alongside your explanation
    - Treat the visual elements as an extension of your teaching, not a separate tool
 
-Examples of good HTML:
-<h2 style="color:#2563eb">Main Concept</h2>
+Examples of good HTML: 
+<section class="prose lg:prose-l">
+<h1>Main Concept</h1>
+<h2>Secondary idea</h2>
 <ul>
   <li><strong>Key Point 1:</strong> Explanation...</li>
   <li><strong>Key Point 2:</strong> Explanation...</li>
 </ul>
 <hr>
-<div style="margin:10px 0">Additional information here...</div>
+<h3>Additional information here...</h3>
+<p>This is a paragraph with <strong>important</strong> details.</p>
+</section>
 `,
   },
 });
