@@ -1,3 +1,4 @@
+import React from "react";
 import WhiteboardOutput from "./whiteboard/WhiteboardOutput";
 import { useWhiteboardState } from "./whiteboard/useWhiteboardState";
 import { ActivityIndicator } from "./ActivityIndicator";
@@ -37,9 +38,6 @@ export default function Screen({
             <WhiteboardOutput
               whiteboardHtml={whiteboardHtml}
               isLoading={!isResponseComplete}
-              isSessionActive={isSessionActive}
-              answerStream={answerStream}
-              questionStream={questionStream}
             />
             <div className="absolute flex w-full bottom-0 left-1/2 right-1/2 transform -translate-x-1/2 flex-col items-center justify-center gap-2 p-8">
               <ActivityIndicator

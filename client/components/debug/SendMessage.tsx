@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { MessageSquare } from "react-feather";
 import Button from "../Button";
 import InputPrompt from "./InputPrompt";

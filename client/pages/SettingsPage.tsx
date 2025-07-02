@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { getProfile, saveProfile } from "../profile";
 import { useNavigate } from "react-router";
 
@@ -14,10 +14,10 @@ export const SettingsPage = () => {
         navigate("/", { replace: true });
     }
 
-    const nameInputRef = useRef();
-    const locationRef = useRef();
-    const locationAccessRef = useRef();
-    const locationInputRef = useRef();
+    const nameInputRef = useRef(null);
+    const locationRef = useRef(null);
+    const locationAccessRef = useRef(null);
+    const locationInputRef = useRef(null);
 
     useEffect(() => {
         const profile = getProfile();

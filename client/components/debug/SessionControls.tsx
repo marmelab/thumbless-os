@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { CloudLightning, CloudOff } from "react-feather";
 import Button from "../Button";
 
@@ -36,11 +36,9 @@ function SessionStopped({ startSession, sessionError }) {
 
 function SessionActive({ stopSession }) {
   return (
-
     <Button onClick={stopSession} icon={<CloudOff height={16} />}>
       disconnect
     </Button>
-
   );
 }
 
@@ -48,14 +46,12 @@ export default function SessionControls({
   startSession,
   stopSession,
   isSessionActive,
-  sessionError
+  sessionError,
 }) {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-2">
       {isSessionActive ? (
-        <SessionActive
-          stopSession={stopSession}
-        />
+        <SessionActive stopSession={stopSession} />
       ) : (
         <SessionStopped
           startSession={startSession}

@@ -1,6 +1,6 @@
+import React from "react";
 import EventLog from "./EventLog";
 import SessionControls from "./SessionControls";
-import { SendMessage } from "./SendMessage";
 
 export function Debug({
     startSession,
@@ -17,9 +17,6 @@ export function Debug({
                 <SessionControls
                     startSession={startSession}
                     stopSession={stopSession}
-                    sendClientEvent={sendClientEvent}
-                    sendTextMessage={sendTextMessage}
-                    events={events}
                     isSessionActive={isSessionActive}
                     sessionError={sessionError}
                 />

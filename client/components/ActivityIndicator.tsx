@@ -1,3 +1,4 @@
+import React from "react";
 import { SoundVisualizer } from "./SoundVisualizer";
 
 export const ActivityIndicator = ({
