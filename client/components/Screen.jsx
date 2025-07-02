@@ -41,7 +41,7 @@ export default function Screen({
               answerStream={answerStream}
               questionStream={questionStream}
             />
-            <div className="absolute flex w-full bottom-0 left-1/2 right-1/2 transform -translate-x-1/2 flex-col items-center justify-center gap-2 p-8">
+            <div className="absolute flex w-full bottom-0 left-1/2 right-1/2 transform -translate-x-1/2 flex-rw items-center justify-center gap-4 p-8">
               <ActivityIndicator
                 questionStream={questionStream}
                 answerStream={answerStream}

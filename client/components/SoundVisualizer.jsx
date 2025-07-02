@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 
-const width = 100;
-const height = 100;
+const width = 50;
+const height = 50;
 
-const bars = 64;
+const bars = 32;
 const bar_width = 1;
 const radius = 0;
 const center_x = width / 2;
@@ -29,7 +29,7 @@ function animationLooper(canvas, frequencyArray) {
   const rads = (Math.PI * 2) / bars;
 
   for (var i = 0; i < bars; i++) {
-    const bar_height = frequencyArray[i] / 3;
+    const bar_height = frequencyArray[i] / 5;
 
     const x = center_x + Math.cos(rads * i) * radius;
     const y = center_y + Math.sin(rads * i) * radius;
@@ -52,7 +52,7 @@ export const SoundVisualizer = ({ isSessionActive, audioStream }) => {
     const source = audioCtx.createMediaStreamSource(audioStream);
     source.connect(audioAnalyzer);
     audioAnalyzer.fftSize = 128;
-    
+
     const frequencyData = new Uint8Array(audioAnalyzer.frequencyBinCount);
 
     let requestAnimationFrameId;

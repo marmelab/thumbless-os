@@ -20,7 +20,7 @@ export function SendMessage({ sendTextMessage }) {
         }}
         type="text"
         placeholder="Ask any question or type a topic to learn about..."
-        className="border border-gray-200 rounded-full p-3 flex-1 bg-white shadow-2xl"
+        className="border border-gray-200 rounded-full p-3 flex-1 bg-white"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
@@ -31,7 +31,7 @@ export function SendMessage({ sendTextMessage }) {
           }
         }}
         icon={<MessageSquare height={16} />}
-        className="bg-blue-400 cursor-pointer"
+        variant="outline"
       >
         Send
       </Button>
