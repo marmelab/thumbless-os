@@ -37,27 +37,12 @@ export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
     }, [whiteboardHtml]);
 
     return (
-        <div className="relative w-full h-full text-lg">
-            <div
-                ref={whiteboardRef}
-                className={`w-full h-full bg-white rounded-md p-4 overflow-y-auto border-2 ${isLoading ? 'border-blue-400 pulse-border' :
-                    (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
-                    }`}
-                dangerouslySetInnerHTML={{ __html: whiteboardHtml }}
-            />
-            {isLoading ? (
-                <div className="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">
-                    Visualizing...
-                </div>
-            ) : isWelcomeScreen ? (
-                <div className="absolute top-2 right-2 bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full animate-pulse">
-                    Waiting for your question...
-                </div>
-            ) : whiteboardHtml.trim() === "" ? (
-                <div className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded-full animate-pulse">
-                    Waiting for visuals...
-                </div>
-            ) : null}
-        </div>
+        <div
+            ref={whiteboardRef}
+            className={`w-full grow bg-white rounded-md p-4 overflow-y-auto border-2 align-center ${isLoading ? 'border-blue-400 pulse-border' :
+                (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
+                }`}
+            dangerouslySetInnerHTML={{ __html: whiteboardHtml }}
+        />
     );
 }
