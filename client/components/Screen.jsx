@@ -15,7 +15,7 @@ export default function Screen({
   toggleMicrophone,
 }) {
   // Use our custom hook for whiteboard state management
-  const { whiteboardHtml, isResponseComplete } = useWhiteboardState(
+  const { whiteboardHtml, isResponseComplete, goBack } = useWhiteboardState(
     isSessionActive,
     sendClientEvent,
     events,
@@ -34,6 +34,12 @@ export default function Screen({
       <div className="w-full max-w-[450px] h-full flex bg-white rounded-md">
         {isSessionActive ? (
           <div className="w-full h-full text-lg flex flex-col">
+            {
+              goBack && (
+                <button className="bg-gray-800 mb-2 w-fit text-white rounded-full py-2 px-4 hover:opacity-90" type="button" onClick={goBack}>&lt; Go back</button>
+              )
+            }
+
             <WhiteboardOutput
               whiteboardHtml={whiteboardHtml}
               isLoading={!isResponseComplete}

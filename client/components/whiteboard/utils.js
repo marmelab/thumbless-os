@@ -17,14 +17,33 @@ export function sendSystemMessageAndResponse(sendClientEvent, message) {
   sendClientEvent({ type: "response.create" });
 }
 
+export function sendPreviousWhiteboard(sendClientEvent, newWhiteboardHtml) {
+  sendClientEvent({
+    type: "conversation.item.create",
+    item: {
+      type: "message",
+      role: "system",
+      content: [
+        {
+          type: "input_text",
+          text: `The user went back to a previous version of the whiteboard, they probably want to talk about this subject again.
+          Here is the new whiteboard: ${newWhiteboardHtml}`,
+        },
+      ],
+    },
+  });
+}
+
 // Handle write_to_whiteboard function call
 export function handleWriteToWhiteboard(
   args,
   setWhiteboardHtml,
+  appendWhiteboardToHistory,
   sendClientEvent,
 ) {
   console.log("Writing new visual content:", args.html);
   setWhiteboardHtml(args.html);
+  appendWhiteboardToHistory(args.html);
 
   // Continue explanation naturally without mentioning the whiteboard
   sendSystemMessageAndResponse(
@@ -40,6 +59,7 @@ export function handleUpdateWhiteboardElement(
   args,
   whiteboardHtml,
   setWhiteboardHtml,
+  appendWhiteboardToHistory,
   sendClientEvent,
 ) {
   console.log("Updating specific element:", args.elementId);
@@ -69,6 +89,7 @@ export function handleUpdateWhiteboardElement(
     }
   }
   setWhiteboardHtml(newWhiteboardHTML);
+  appendWhiteboardToHistory(newWhiteboardHTML);
 
   // Continue explanation naturally
   sendSystemMessageAndResponse(
@@ -84,10 +105,13 @@ export function handleAddToWhiteboard(
   args,
   whiteboardHtml,
   setWhiteboardHtml,
+  updateCurrentWhiteboardInHistory,
   sendClientEvent,
 ) {
   console.log("Adding additional visual content");
-  setWhiteboardHtml(whiteboardHtml + args.html);
+  const newWhiteboardHtml = whiteboardHtml + args.html;
+  setWhiteboardHtml(newWhiteboardHtml);
+  updateCurrentWhiteboardInHistory(newWhiteboardHtml);
 
   // Continue explanation naturally
   sendSystemMessageAndResponse(
