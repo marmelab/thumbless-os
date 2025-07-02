@@ -13,6 +13,7 @@ export default function Screen({
   isMicrophoneActive,
   sendTextMessage,
   toggleMicrophone,
+  stopSpeaking,
 }) {
   // Use our custom hook for whiteboard state management
   const { whiteboardHtml, isResponseComplete } = useWhiteboardState(
@@ -51,7 +52,7 @@ export default function Screen({
                 toggleMicrophone={toggleMicrophone}
               />
               <div>
-                <SendMessage sendTextMessage={sendTextMessage} />
+                <SendMessage sendTextMessage={sendTextMessage} stopSpeaking={stopSpeaking} />
               </div>
             </div>
           </div>

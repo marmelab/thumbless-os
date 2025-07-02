@@ -3,10 +3,11 @@ import { MessageSquare } from "react-feather";
 import Button from "../Button";
 import InputPrompt from "./InputPrompt";
 
-export function SendMessage({ sendTextMessage }) {
+export function SendMessage({ sendTextMessage, stopSpeaking }) {
   const [message, setMessage] = useState("");
 
   function handleSendClientEvent() {
+    stopSpeaking();
     sendTextMessage(message);
     setMessage("");
   }
