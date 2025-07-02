@@ -17,6 +17,8 @@ export default function App() {
   const [questionStream, setQuestionStream] = useState(null);
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
 
+	const sendTextMessage = useRef(() => {});
+
   useEffect(() => {
     if(!questionStream) {
       return;
@@ -197,7 +199,7 @@ export default function App() {
   }
 
   // Send a text message to the model
-  function sendTextMessage(message) {
+	sendTextMessage.current = (message) => {
     const event = {
       type: "conversation.item.create",
       item: {
@@ -262,6 +264,13 @@ export default function App() {
     return () => stopSession();
   }, [dataChannel]);
 
+  useEffect(() => {
+    window.userReply = (message) => {
+      // Add userReply in front of the message because too small replies prevent the AI from responding.
+	    sendTextMessage.current(`userReply: ${message}`);
+    }
+  }, [sendTextMessage]);
+
   return (
     <>
       <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
@@ -278,7 +287,7 @@ export default function App() {
         <Screen
           state={state}
           sendClientEvent={sendClientEvent}
-          sendTextMessage={sendTextMessage}
+          sendTextMessage={sendTextMessage.current}
           events={events}
           isSessionActive={isSessionActive}
           questionStream={questionStream}
@@ -290,7 +299,7 @@ export default function App() {
           startSession={startSession}
           stopSession={stopSession}
           sendClientEvent={sendClientEvent}
-          sendTextMessage={sendTextMessage}
+          sendTextMessage={sendTextMessage.current}
           events={events}
           isSessionActive={isSessionActive}
           sessionError={sessionError}

@@ -119,9 +119,11 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Use id attributes for all major elements (e.g., <div id="intro">, <section id="steps">, etc.)
    - Use headings (<h1 id="main-title">, <h2 id="subtopic">, etc.) for clear section breaks
    - Create organized lists (<ul id="key-points">, <ol id="procedure">) for steps or points
+   - Always wrap each step or point with a link that calls the userReply function with the topic (this function is available globally in the window object), allowing the user to ask for more details on that point.
+   - User interactions are important, you should always provide something to click on. Do not forget it, adding styles is not enough to call userReply. You must add it explicitly with onClick.
    - Use tables for comparing items or showing structured data
    - Use <div> with consistent styling for visual organization
-   - You can use Tailwind CSS classes for styling
+   - You must use Tailwind CSS classes for styling, especially for buttons or links so the user can know that they are clickable
 
 5. NEVER explicitly mention the whiteboard:
    - Instead of "Let me show you on the whiteboard", just say "Let's look at..." or "Here's how..."
@@ -129,14 +131,17 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Speak as if the visual content is naturally appearing alongside your explanation
    - Treat the visual elements as an extension of your teaching, not a separate tool
 
-Examples of good HTML:
-<h2 style="color:#2563eb">Main Concept</h2>
-<ul>
-  <li><strong>Key Point 1:</strong> 💡 Explanation...</li>
-  <li><strong>Key Point 2:</strong> Explanation...</li>
-</ul>
-<hr>
-<div style="margin:10px 0">Additional information here...</div>
-`,
+Examples of good HTML (note that it includes links that call the userReply function which is available in the client):
+<div id="intro" class="p-4 bg-gray-100 rounded">
+<h2 class="text-2xl text-zinc-600 mb-2">Top 5 Horror Movies 📽️</h2>
+<p>Here are some iconic horror films that have left a lasting impact on the genre:</p>
+</div>
+<ul id="movies-list" class="list-disc pl-8 mt-2">
+  <li><strong>1. Psycho (1960)</strong>: A classic thriller by Alfred Hitchcock known for its suspenseful scenes and plot twists. <a class="underline text-blue-500" href="#" onclick="userReply('Psycho details')">Details</a></li>
+  <li><strong>2. The Exorcist (1973)</strong>: A supernatural horror film that explores themes of possession and faith. <a class="underline text-blue-500" href="#" onclick="userReply('The Exorcist details')">Details</a></li>
+  <li><strong>3. Halloween (1978)</strong>: John Carpenter's slasher film that introduced the character Michael Myers. <a class="underline text-blue-500" href="#" onclick="userReply('Halloween details')">Details</a></li>
+  <li><strong>4. The Shining (1980)</strong>: Directed by Stanley Kubrick, based on Stephen King's novel, known for its eerie ambiance. <a class="underline text-blue-500" href="#" onclick="userReply('The Shining details')">Details</a></li>
+  <li><strong>5. Get Out (2017)</strong>: A modern horror-thriller by Jordan Peele that combines social commentary with suspense. <a class="underline text-blue-500" href="#" onclick="userReply('Get Out details')">Details</a></li>
+</ul>`,
   },
 });
