@@ -4,6 +4,7 @@ import {
   handleAddToWhiteboard,
   handleUpdateWhiteboardElement,
   handleWriteToWhiteboard,
+  requestResponse,
 } from "./utils";
 
 export function processToolCalls(
@@ -15,6 +16,7 @@ export function processToolCalls(
   setWhiteboardHtml,
   updateCurrentWhiteboardInHistory,
   appendWhiteboardToHistory,
+  goBack,
   sendClientEvent,
 ) {
   const responseDoneEvents = events.filter(
@@ -189,6 +191,11 @@ export function processToolCalls(
             } else {
               console.error("Missing query argument in web_search call");
             }
+            break;
+
+          case FUNCTION_NAMES.goBack:
+            goBack();
+            requestResponse(sendClientEvent);
             break;
 
           default:

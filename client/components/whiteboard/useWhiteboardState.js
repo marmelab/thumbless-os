@@ -45,6 +45,7 @@ export function useWhiteboardState(isSessionActive, sendClientEvent, events) {
       setWhiteboardHtml,
       updateCurrentWhiteboardInHistory,
       appendWhiteboardToHistory,
+      goBack,
       sendClientEvent,
     );
   }, [events, lastResponseId, whiteboardHtml, sendClientEvent]);

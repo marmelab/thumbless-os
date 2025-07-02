@@ -34,6 +34,10 @@ export function sendPreviousWhiteboard(sendClientEvent, newWhiteboardHtml) {
   });
 }
 
+export function requestResponse(sendClientEvent) {
+  sendClientEvent({ type: "response.create" });
+}
+
 // Handle write_to_whiteboard function call
 export function handleWriteToWhiteboard(
   args,
