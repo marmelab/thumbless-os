@@ -12,7 +12,7 @@ export const WELCOME_HTML = `<div id="welcome-container">
     <ul class="list-disc pl-6">
       <li><a href="#" class="underline" onclick="userReply('Explain the concept of gravity')">Can you explain the concept of gravity?</a></li>
       <li><a href="#" class="underline" onclick="userReply('What dog breed would you recommend for a family?')">What dog breed would you recommend for a family?</a></li>
-      <li><a href="#" class="underline" onclick="userReply('What\'s the weather like today in Nancy, France?')">What's the weather like today in Nancy, France?</a></li>
+      <li><a href="#" class="underline" onclick="userReply('What s the weather like today in Nancy, France?')">What's the weather like today in Nancy, France?</a></li>
     </ul>
   </p>
 </div>`;

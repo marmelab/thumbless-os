@@ -93,7 +93,6 @@ export function handleAddToWhiteboard(
   sendSystemMessageAndResponse(
     sendClientEvent,
     `Continue your explanation by elaborating on the new visual elements you've just added. Refer to them naturally in your teaching without mentioning that they're on a whiteboard.
-    You can also update the whiteboard to support your response. Here is the whiteboard by the way:
-    ${whiteboardHtml + args.html}`,
+    Do not update the whiteboard until you are asked to do so.`,
   );
 }
