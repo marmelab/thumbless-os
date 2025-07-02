@@ -4,7 +4,14 @@
     "jsx": "react",
     "outDir": "./built",
     "allowJs": true,
+    // "module": "CommonJS",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "target": "es5",
     "module": "es2020",
   },
-  "include": ["./client/**/*", "server.ts"]
+  "include": [
+    "./client/**/*",
+    "server.ts"
+  ]
 }

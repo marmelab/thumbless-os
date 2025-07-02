@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Settings as SettingsIcon } from "react-feather";
 import { Link } from "react-router";
-import logo from "../assets/thumbs-up.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
 import { getProfile } from "../profile";
 import { declareTools } from "./whiteboard/declareTools";
+
+declare global {
+    interface Window {
+        userReply: (message: string) => void;
+    }
+}
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -19,7 +24,7 @@ export default function App() {
   const [questionStream, setQuestionStream] = useState(null);
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
 
-  const sendTextMessage = useRef(() => {});
+  const sendTextMessage = useRef((message: string) => {});
 
   useEffect(() => {
     if (!questionStream) {
@@ -137,12 +142,10 @@ export default function App() {
         }
 
         const sdpText = await sdpResponse.text();
-        const answer = {
+        await pc.setRemoteDescription({
           type: "answer",
           sdp: sdpText,
-        };
-
-        await pc.setRemoteDescription(answer);
+        });
 
         peerConnection.current = pc;
       } catch (error) {
@@ -285,7 +288,7 @@ export default function App() {
     <>
       <nav className="absolute top-0 left-0 right-0 flex items-center">
         <div className="flex items-center justify-center gap-2 w-full py-3 px-4 border-0 border-b border-solid border-gray-200">
-          <img style={{ width: "24px" }} src={logo} />
+          <img style={{ width: "24px" }} src="/assets/thumbs-up.svg" />
           <h1>Thumbless OS</h1>
           <Link to="/settings" className="ml-auto" title="Settings">
             <span className="sr-only">Settings</span>
