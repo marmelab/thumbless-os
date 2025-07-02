@@ -88,6 +88,82 @@ export function processToolCalls(
               console.error("Missing html argument in add_to_whiteboard call");
             }
             break;
+          case "search_unsplash_image":
+            if (args.query) {
+              fetch(`${import.meta.env.VITE_API_URL}/unsplash-image?q=${encodeURIComponent(args.query)}`)
+                .then(res => res.json())
+                .then(data => {
+                  if (data.url) {
+                    sendClientEvent({
+                      type: "conversation.item.create",
+                      item: {
+                        type: "message",
+                        role: "system",
+                        content: [
+                          {
+                            type: "input_text",
+                            text: `Here is an Unsplash image for "${args.query}": ${data.url}. You can use this image in your next whiteboard update by including in your HTML.`,
+                          },
+                        ],
+                      },
+                    });
+                  } else {
+                    console.error("No Unsplash image found for query", args.query);
+                  }
+                   // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
+                })
+                .catch(err => {
+                  console.error("Error fetching Unsplash image:", err);
+                });
+            } else {
+              console.error("Missing query argument in search_unsplash_image call");
+            }
+            break;
+          case FUNCTION_NAMES.search:
+            if (args.query) {
+              handleWebSearch(
+                args.query,
+                output.call_id,
+                sendClientEvent,
+              );
+            } else {
+              console.error("Missing query argument in web_search call");
+            }
+            break;
+
+          case "search_unsplash_image":
+            if (args.query) {
+              fetch(`${import.meta.env.VITE_API_URL}/unsplash-image?q=${encodeURIComponent(args.query)}`)
+                .then(res => res.json())
+                .then(data => {
+                  if (data.url) {
+                    sendClientEvent({
+                      type: "conversation.item.create",
+                      item: {
+                        type: "message",
+                        role: "system",
+                        content: [
+                          {
+                            type: "input_text",
+                            text: `Here is an Unsplash image for "${args.query}": ${data.url}. You can use this image in your next whiteboard update by including in your HTML.`,
+                          },
+                        ],
+                      },
+                    });
+                  } else {
+                    console.error("No Unsplash image found for query", args.query);
+                  }
+                   // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
+                })
+                .catch(err => {
+                  console.error("Error fetching Unsplash image:", err);
+                });
+            } else {
+              console.error("Missing query argument in search_unsplash_image call");
+            }
+            break;
 
           case FUNCTION_NAMES.search:
             if (args.query) {

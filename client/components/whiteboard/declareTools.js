@@ -82,12 +82,30 @@ export const declareTools = (profile) => ({
           required: ["html"],
         },
       },
+      {
+        type: "function",
+          name: FUNCTION_NAMES.image,
+          description:
+            "Search Unsplash for a relevant image. Returns a direct image URL. After receiving the URL, use it in your next whiteboard update by including an <img src='...'> tag in your HTML. When generating a list with images, always place each <img> tag inside its corresponding <li>, directly below the item description.",
+          parameters: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "The search term for the Unsplash image.",
+              },
+            },
+            required: ["query"],
+          },
+      },
     ],
     tool_choice: "auto",
     instructions: `You are an AI Assistant embedded in a chat application. For every user message, you must respond by calling at least one of the predefined functions, even if the user message is conversational or vague.
 You have a whiteboard at your disposal to help explain concepts visually. Use tools to create, update, and add visual content as you teach to the whiteboard.
 Your sole purpose is to interpret the user input and map it to the correct function call, supplying the most appropriate arguments. If the intent is unclear, make a best guess using available functions.
 All the answers must be done with a function call. The response size must be concise and contain a maximum of 100 tokens.
+
+IMPORTANT: For every concept, explanation, or topic that can be illustrated visually, you MUST use the search_unsplash_image tool to find and display a relevant Unsplash image. Always illustrate with a real Unsplash image when possible, in addition to your textual or visual explanations. Do not invent image URLs, always use the tool for real image search.
 
 CONVERSATION FLOW:
 - IMPORTANT: DO NOT speak or write until the user asks a question or specifies a topic first
@@ -115,6 +133,7 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
 1. Integrate visual elements NATURALLY in your teaching:
    - Use the write_to_whiteboard tool to write to the whiteboard or replace most of the existing content. As the whiteboard is small, this is the preferred method for writing on the whiteboard.
    - Use the update_whiteboard_element tool to modify specific sections as your explanation evolves.
+   - Use the search_unsplash_image tool to illustrate every concept or topic with a real Unsplash image whenever possible.
    - Use the add_to_whiteboard tool to build content incrementally as you teach. As the whiteboard is small, use this tool sparingly, and prefer the write_to_whiteboard tool unless you need to add small details to the previous topic.
    - ALWAYS write your explanation in the whiteboard
    - If you need complementary information, use the add_to_whiteboard tool to append it to the whiteboard
