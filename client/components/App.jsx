@@ -15,7 +15,7 @@ export default function App() {
   const [sessionError, setSessionError] = useState(null);
   const [answerStream, setAnswerStream] = useState(null);
   const [questionStream, setQuestionStream] = useState(null);
-  const [isMicrophoneActive, setIsMicrophoneActive] = useState(true);
+  const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
 
   useEffect(() => {
     if(!questionStream) {
