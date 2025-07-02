@@ -4,14 +4,21 @@
     "jsx": "react",
     "outDir": "./built",
     "allowJs": true,
-    // "module": "CommonJS",
+    "types": [
+      "node",
+      "vite/client"
+    ],
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "target": "es5",
-    "module": "es2020",
+    "target": "es6",
+    "lib": [
+      "DOM",
+      "ES2015"
+    ],
+    "module": "CommonJS",
+    // "strict": true,
   },
   "include": [
-    "./client/**/*",
-    "server.ts"
+    "./client/**/*"
   ]
 }
