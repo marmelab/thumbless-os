@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { MessageSquare } from "react-feather";
 import Button from "../Button";
-import InputPrompt from "./InputPrompt";
 
 export function SendMessage({ sendTextMessage }) {
   const [message, setMessage] = useState("");
@@ -13,7 +12,6 @@ export function SendMessage({ sendTextMessage }) {
 
   return (
     <div className="flex items-center w-full gap-4">
-      <InputPrompt isSessionActive={true} />
       <input
         onKeyDown={(e) => {
           if (e.key === "Enter" && message.trim()) {
