@@ -97,6 +97,9 @@ export const declareTools = (profile) => ({
             },
             required: ["query"],
           },
+        name: FUNCTION_NAMES.goBack,
+        description:
+          "Go back to a previous version of the whiteboard, which is sent back to you so you can know about it. Use this function when the user asks to go back to the previous subject.",
       },
     ],
     tool_choice: "auto",

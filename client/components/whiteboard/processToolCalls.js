@@ -4,6 +4,7 @@ import {
   handleAddToWhiteboard,
   handleUpdateWhiteboardElement,
   handleWriteToWhiteboard,
+  requestResponse,
 } from "./utils";
 
 export function processToolCalls(
@@ -13,6 +14,9 @@ export function processToolCalls(
   setIsResponseComplete,
   whiteboardHtml,
   setWhiteboardHtml,
+  updateCurrentWhiteboardInHistory,
+  appendWhiteboardToHistory,
+  goBack,
   sendClientEvent,
 ) {
   const responseDoneEvents = events.filter(
@@ -52,7 +56,7 @@ export function processToolCalls(
         switch (output.name) {
           case FUNCTION_NAMES.write:
             if (args.html) {
-              handleWriteToWhiteboard(args, setWhiteboardHtml, sendClientEvent);
+              handleWriteToWhiteboard(args, setWhiteboardHtml, appendWhiteboardToHistory, sendClientEvent);
             } else {
               console.error(
                 "Missing html argument in write_to_whiteboard call",
@@ -67,6 +71,7 @@ export function processToolCalls(
                 args,
                 whiteboardHtml,
                 setWhiteboardHtml,
+                appendWhiteboardToHistory,
                 sendClientEvent,
               );
             } else {
@@ -82,6 +87,7 @@ export function processToolCalls(
                 args,
                 whiteboardHtml,
                 setWhiteboardHtml,
+                updateCurrentWhiteboardInHistory,
                 sendClientEvent,
               );
             } else {
@@ -185,6 +191,11 @@ export function processToolCalls(
             } else {
               console.error("Missing query argument in web_search call");
             }
+            break;
+
+          case FUNCTION_NAMES.goBack:
+            goBack();
+            requestResponse(sendClientEvent);
             break;
 
           default:

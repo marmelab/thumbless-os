@@ -244,7 +244,11 @@ export default function App() {
         const event = JSON.parse(e.data);
         switch (event.type) {
           case "conversation.item.created":
-            setState("processing");
+            // Ignore this internal message.
+            if ((event?.item?.content?.[0]?.text ?? "").startsWith("The user went back to a previous version"))
+              break;
+
+            setState('processing');
             break;
           case "output_audio_buffer.started":
             setState("answering");
