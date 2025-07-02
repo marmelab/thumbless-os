@@ -4,6 +4,8 @@ import { Link } from "react-router";
 import logo from "/assets/thumb-down.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
+import { getProfile } from "../profile";
+import { declareTools } from "./whiteboard/declareTools";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -256,6 +258,9 @@ export default function App() {
 
       // Set session active when the data channel is opened
       dataChannel.addEventListener("open", () => {
+        // start by declaring tools
+        const profile = getProfile();
+        sendClientEvent(declareTools(profile));
         setIsSessionActive(true);
         setEvents([]);
       });
