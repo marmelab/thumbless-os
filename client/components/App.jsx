@@ -19,7 +19,7 @@ export default function App() {
   const [questionStream, setQuestionStream] = useState(null);
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
 
-  const sendTextMessage = useRef(() => {});
+  const sendTextMessage = useRef(() => { });
 
   useEffect(() => {
     if (!questionStream) {
@@ -34,12 +34,12 @@ export default function App() {
 
   const stopSpeaking = useCallback(() => {
     console.log("Stopping speaking...");
-    const event = {
-      event_id: "optional_client_event_id",
+    sendClientEvent({
+      type: "response.cancel",
+    });
+    sendClientEvent({
       type: "output_audio_buffer.clear",
-    };
-
-    dataChannel?.send(JSON.stringify(event));
+    });
   }, [dataChannel]);
 
   const startSession = useCallback(
@@ -288,6 +288,7 @@ export default function App() {
 
   useEffect(() => {
     window.userReply = (message) => {
+      console.log("User reply:", message);
       // Add userReply in front of the message because too small replies prevent the AI from responding.
       sendTextMessage.current(`userReply: ${message}`);
     };
