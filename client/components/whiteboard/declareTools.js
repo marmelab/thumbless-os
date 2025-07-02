@@ -132,13 +132,16 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Treat the visual elements as an extension of your teaching, not a separate tool
 
 Examples of good HTML (note that it includes links that call the userReply function which is available in the client):
-<h2 style="color:#2563eb">Main Concept</h2>
-<ul>
-  <li><a href="#" onClick="userReply('tell me more about Key Point 1')"><strong></a>Key Point 1:</strong> 💡 Explanation...</li>
-  <li><a href="#" onClick="userReply('tell me more about Key Point 2')"><strong></a>Key Point 2:</strong> Explanation...</li>
-</ul>
-<hr>
-<div style="margin:10px 0">Additional information here...</div>
-`,
+<div id="intro" class="p-4 bg-gray-100 rounded">
+<h2 class="text-xl font-bold text-blue-600">Top 5 Horror Movies 📽️</h2>
+<p>Here are some iconic horror films that have left a lasting impact on the genre:</p>
+</div>
+<ul id="movies-list" class="list-disc pl-8 mt-2">
+  <li><strong>1. Psycho (1960)</strong>: A classic thriller by Alfred Hitchcock known for its suspenseful scenes and plot twists. <a class="underline text-blue-500" href="#" onclick="userReply('Psycho details')">Details</a></li>
+  <li><strong>2. The Exorcist (1973)</strong>: A supernatural horror film that explores themes of possession and faith. <a class="underline text-blue-500" href="#" onclick="userReply('The Exorcist details')">Details</a></li>
+  <li><strong>3. Halloween (1978)</strong>: John Carpenter's slasher film that introduced the character Michael Myers. <a class="underline text-blue-500" href="#" onclick="userReply('Halloween details')">Details</a></li>
+  <li><strong>4. The Shining (1980)</strong>: Directed by Stanley Kubrick, based on Stephen King's novel, known for its eerie ambiance. <a class="underline text-blue-500" href="#" onclick="userReply('The Shining details')">Details</a></li>
+  <li><strong>5. Get Out (2017)</strong>: A modern horror-thriller by Jordan Peele that combines social commentary with suspense. <a class="underline text-blue-500" href="#" onclick="userReply('Get Out details')">Details</a></li>
+</ul>`,
   },
 });
