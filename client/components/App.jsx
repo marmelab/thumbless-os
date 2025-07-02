@@ -217,6 +217,7 @@ export default function App() {
 
   // Send a text message to the model
   sendTextMessage.current = (message) => {
+    stopSpeaking();
     const event = {
       type: "conversation.item.create",
       item: {
@@ -315,7 +316,6 @@ export default function App() {
           answerStream={answerStream}
           isMicrophoneActive={isMicrophoneActive}
           toggleMicrophone={toggleMicrophone}
-          stopSpeaking={stopSpeaking}
         />
         <Debug
           startSession={startSession}
