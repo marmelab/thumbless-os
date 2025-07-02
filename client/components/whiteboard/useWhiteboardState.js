@@ -18,9 +18,10 @@ export function useWhiteboardState(isSessionActive, sendClientEvent, events) {
   };
   const appendWhiteboardToHistory = (whiteboardContent) => {
     setWhiteboardHistory([
-      ...whiteboardHistory,
+      ...whiteboardHistory.slice(0, whiteboardHistory.length - historyTarget),
       whiteboardContent,
     ]);
+    setHistoryTarget(0);
   }
 
   // Target element in the history should be the current whiteboard, we want the one before.
