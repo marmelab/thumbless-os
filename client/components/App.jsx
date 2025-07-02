@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Settings as SettingsIcon } from "react-feather";
 import { Link } from "react-router";
-import logo from "/assets/thumb-down.svg";
+import logo from "/assets/thumbs-up.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
 import { getProfile } from "../profile";
@@ -19,14 +19,14 @@ export default function App() {
   const [questionStream, setQuestionStream] = useState(null);
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
 
-	const sendTextMessage = useRef(() => {});
+  const sendTextMessage = useRef(() => { });
 
   useEffect(() => {
-    if(!questionStream) {
+    if (!questionStream) {
       return;
     }
     questionStream.getTracks()[0].enabled = isMicrophoneActive;
-  },[questionStream, isMicrophoneActive])
+  }, [questionStream, isMicrophoneActive])
 
   const toggleMicrophone = useCallback(() => {
     setIsMicrophoneActive((prev) => !prev);
@@ -201,7 +201,7 @@ export default function App() {
   }
 
   // Send a text message to the model
-	sendTextMessage.current = (message) => {
+  sendTextMessage.current = (message) => {
     const event = {
       type: "conversation.item.create",
       item: {
@@ -239,7 +239,7 @@ export default function App() {
             setState('asking');
             break;
           default:
-            // do nothing
+          // do nothing
         }
 
         if (
@@ -272,7 +272,7 @@ export default function App() {
   useEffect(() => {
     window.userReply = (message) => {
       // Add userReply in front of the message because too small replies prevent the AI from responding.
-	    sendTextMessage.current(`userReply: ${message}`);
+      sendTextMessage.current(`userReply: ${message}`);
     }
   }, [sendTextMessage]);
 
