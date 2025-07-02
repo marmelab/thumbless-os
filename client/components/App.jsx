@@ -266,7 +266,8 @@ export default function App() {
 
   useEffect(() => {
     window.userReply = (message) => {
-	    sendTextMessage.current(message);
+      // Add userReply in front of the message because too small replies prevent the AI from responding.
+	    sendTextMessage.current(`userReply: ${message}`);
     }
   }, [sendTextMessage]);
 
