@@ -35,16 +35,18 @@ export default function Screen({
         {isSessionActive ? (
           <div className="w-full h-full text-lg flex flex-col">
             <div className="flex justify-between">
-              <button className={`bg-gray-800 mb-2 w-fit text-white rounded-full py-2 px-4 ${!goBack ? "opacity-50" : "hover:opacity-90"}`} type="button"
-                      disabled={!goBack}
-                      onClick={goBack ?? undefined}>
-                &lt; Go back
-              </button>
-              <button className={`bg-gray-800 mb-2 w-fit text-white rounded-full py-2 px-4 ${!goToNextPage ? "opacity-50" : "hover:opacity-90"}`} type="button"
-                      disabled={!goToNextPage}
-                      onClick={goToNextPage ?? undefined}>
-                &gt; Next page
-              </button>
+              {
+                goBack &&
+                  <button className="bg-gray-800 mb-2 w-fit text-white rounded-full py-2 px-4 hover:opacity-90" type="button" onClick={goBack}>
+                    &lt; Go back
+                  </button>
+              }
+              {
+                goToNextPage &&
+                  <button className="bg-gray-800 mb-2 ml-auto w-fit text-white rounded-full py-2 px-4 hover:opacity-90" type="button" onClick={goToNextPage}>
+                    &gt; Next page
+                  </button>
+              }
             </div>
 
             <WhiteboardOutput
