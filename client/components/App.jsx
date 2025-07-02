@@ -17,6 +17,8 @@ export default function App() {
   const [questionStream, setQuestionStream] = useState(null);
   const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
 
+	const sendTextMessage = useRef(() => {});
+
   useEffect(() => {
     if(!questionStream) {
       return;
@@ -197,7 +199,7 @@ export default function App() {
   }
 
   // Send a text message to the model
-  function sendTextMessage(message) {
+	sendTextMessage.current = (message) => {
     const event = {
       type: "conversation.item.create",
       item: {
@@ -264,9 +266,9 @@ export default function App() {
 
   useEffect(() => {
     window.userReply = (message) => {
-      sendTextMessage(message);
+	    sendTextMessage.current(message);
     }
-  }, []);
+  }, [sendTextMessage]);
 
   return (
     <>
@@ -284,7 +286,7 @@ export default function App() {
         <Screen
           state={state}
           sendClientEvent={sendClientEvent}
-          sendTextMessage={sendTextMessage}
+          sendTextMessage={sendTextMessage.current}
           events={events}
           isSessionActive={isSessionActive}
           questionStream={questionStream}
@@ -296,7 +298,7 @@ export default function App() {
           startSession={startSession}
           stopSession={stopSession}
           sendClientEvent={sendClientEvent}
-          sendTextMessage={sendTextMessage}
+          sendTextMessage={sendTextMessage.current}
           events={events}
           isSessionActive={isSessionActive}
           sessionError={sessionError}
