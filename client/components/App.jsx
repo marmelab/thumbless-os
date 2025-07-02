@@ -175,6 +175,7 @@ export default function App() {
     setIsSessionActive(false);
     setDataChannel(null);
     peerConnection.current = null;
+    setEvents([]);
   }
 
   // Send an event to the model
