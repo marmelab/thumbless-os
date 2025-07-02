@@ -133,7 +133,7 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
 
 Examples of good HTML (note that it includes links that call the userReply function which is available in the client):
 <div id="intro" class="p-4 bg-gray-100 rounded">
-<h2 class="text-xl font-bold text-blue-600">Top 5 Horror Movies 📽️</h2>
+<h2 class="text-2xl text-zinc-600 mb-2">Top 5 Horror Movies 📽️</h2>
 <p>Here are some iconic horror films that have left a lasting impact on the genre:</p>
 </div>
 <ul id="movies-list" class="list-disc pl-8 mt-2">
