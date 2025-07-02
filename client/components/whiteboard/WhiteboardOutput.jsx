@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
-    const isWelcomeScreen = whiteboardHtml.includes("Welcome to Thumbless OS");
+export default function WhiteboardOutput({ whiteboardHtml }) {
     const whiteboardRef = useRef(null);
 
     // Add animation class to elements that changed recently
@@ -39,9 +38,6 @@ export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
     return (
         <div
             ref={whiteboardRef}
-            className={`w-full grow bg-white rounded-md p-4 overflow-y-auto border-2 align-center ${isLoading ? 'border-blue-400 pulse-border' :
-                (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
-                }`}
             dangerouslySetInnerHTML={{ __html: whiteboardHtml }}
         />
     );
