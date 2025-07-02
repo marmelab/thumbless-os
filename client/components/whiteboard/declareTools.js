@@ -67,6 +67,33 @@ export const declareTools = (profile) => ({
           required: ["html"],
         },
       },
+      {
+        type: "function",
+        name: FUNCTION_NAMES.drawSvg,
+        description:
+          "Create and display an SVG diagram ONLY when visual representation is essential for understanding the concept.",
+        parameters: {
+          type: "object",
+          properties: {
+            svg: {
+              type: "string",
+              description:
+                "Complete SVG content including the <svg> tag with proper viewBox, width, and height attributes. Use semantic colors and clear labels. Include title and description elements for accessibility.",
+            },
+            elementId: {
+              type: "string",
+              description:
+                "Optional ID for the SVG container. If provided, will replace existing SVG with this ID. If not provided, will append to the whiteboard.",
+            },
+            caption: {
+              type: "string",
+              description:
+                "Optional caption or title to display below the SVG diagram to provide context.",
+            },
+          },
+          required: ["svg"],
+        },
+      },
     ],
     tool_choice: "auto",
     instructions: `You are an AI Assistant embedded in a chat application. For every user message, you must respond by calling at least one of the predefined functions, even if the user message is conversational or vague.
@@ -100,6 +127,7 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Use the write_to_whiteboard tool to write to the whiteboard or replace most of the existing content. As the whiteboard is small, this is the preferred method for writing on the whiteboard.
    - Use the update_whiteboard_element tool to modify specific sections as your explanation evolves.
    - Use the add_to_whiteboard tool to build content incrementally as you teach. As the whiteboard is small, use this tool sparingly, and prefer the write_to_whiteboard tool unless you need to add small details to the previous topic.
+   - Use the draw_svg_diagram tool ONLY when visual representation is absolutely essential for understanding the concept.
    - ALWAYS write your explanation in the whiteboard
    - If you need complementary information, use the add_to_whiteboard tool to append it to the whiteboard
 
@@ -107,6 +135,8 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Create visual hierarchy with headings, colors, and spacing
    - Use color minimally for emphasis (blue for titles, subtle colors for highlights)
    - Add borders, backgrounds, or subtle styling for section separation
+   - When creating SVG diagrams, use clear labels, semantic colors, and proper scaling
+   - Include accessibility features in SVGs (title, description elements)
 
 3. Use emojis to enhance engagement:
    - Include relevant emojis in the whiteboard and only the whiteboard to make it more engaging and fun 🎉.
@@ -125,7 +155,17 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Use <div> with consistent styling for visual organization
    - You must use Tailwind CSS classes for styling, especially for buttons or links so the user can know that they are clickable
 
-5. NEVER explicitly mention the whiteboard:
+4. SVG diagram best practices:
+   - Use SVG diagrams ONLY when visual representation is absolutely necessary for comprehension
+   - Ask yourself: "Would this concept be difficult to understand without a visual?" If no, use text-based explanations instead
+   - Perfect use cases: size comparisons, spatial relationships, scientific processes, anatomical structures, complex geometries
+   - Avoid using for: simple definitions, lists, basic explanations, historical facts
+   - Include proper viewBox attributes for responsive scaling
+   - Use semantic colors and clear, readable labels
+   - Add captions when helpful to provide context
+   - Keep diagrams simple and focused on the key concept being explained
+
+5. NEVER explicitly mention the whiteboard or diagrams:
    - Instead of "Let me show you on the whiteboard", just say "Let's look at..." or "Here's how..."
    - Never say "I'll write this down" or "Let me draw this" - just seamlessly integrate visuals
    - Speak as if the visual content is naturally appearing alongside your explanation

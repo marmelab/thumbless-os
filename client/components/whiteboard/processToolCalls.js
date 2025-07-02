@@ -2,6 +2,7 @@ import {
   handleWriteToWhiteboard,
   handleUpdateWhiteboardElement,
   handleAddToWhiteboard,
+  handleDrawSvgDiagram,
 } from "./utils";
 
 export function processToolCalls(
@@ -83,6 +84,19 @@ export function processToolCalls(
               );
             } else {
               console.error("Missing html argument in add_to_whiteboard call");
+            }
+            break;
+
+          case "draw_svg_diagram":
+            if (args.svg) {
+              handleDrawSvgDiagram(
+                args,
+                whiteboardHtml,
+                setWhiteboardHtml,
+                sendClientEvent,
+              );
+            } else {
+              console.error("Missing svg argument in draw_svg_diagram call");
             }
             break;
 
