@@ -2,13 +2,13 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "node server.js --dev",
+    "dev:server": "node server.ts --dev",
     "dev:client": "vite dev",
-    "start": "node server.js",
+    "start": "node server.ts",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --ssrManifest",
-    "build:server": "rm -rf dist/server && mkdir -p dist/server && cp server.js dist/server/server.js && cp package.json dist/server/package.json",
-    "lint": "eslint . --ext .js,.jsx --fix"
+    "build:server": "rm -rf dist/server && mkdir -p dist/server && cp server.ts dist/server/server.ts && cp package.json dist/server/package.json",
+    "lint": "eslint . --ext .ts,.tsx --fix"
   },
   "dependencies": {
     "cors": "^2.8.5",
