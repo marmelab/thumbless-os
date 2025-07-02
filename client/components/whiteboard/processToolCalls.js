@@ -1,7 +1,9 @@
+import { handleWebSearch } from "../../tools/webSearch";
+import { FUNCTION_NAMES } from "./constants";
 import {
-  handleWriteToWhiteboard,
-  handleUpdateWhiteboardElement,
   handleAddToWhiteboard,
+  handleUpdateWhiteboardElement,
+  handleWriteToWhiteboard,
 } from "./utils";
 
 export function processToolCalls(
@@ -48,7 +50,7 @@ export function processToolCalls(
         })();
 
         switch (output.name) {
-          case "write_to_whiteboard":
+          case FUNCTION_NAMES.write:
             if (args.html) {
               handleWriteToWhiteboard(args, setWhiteboardHtml, sendClientEvent);
             } else {
@@ -59,7 +61,7 @@ export function processToolCalls(
             }
             break;
 
-          case "update_whiteboard_element":
+          case FUNCTION_NAMES.update:
             if (args.elementId && args.html) {
               handleUpdateWhiteboardElement(
                 args,
@@ -74,7 +76,7 @@ export function processToolCalls(
             }
             break;
 
-          case "add_to_whiteboard":
+          case FUNCTION_NAMES.add:
             if (args.html) {
               handleAddToWhiteboard(
                 args,
@@ -84,6 +86,18 @@ export function processToolCalls(
               );
             } else {
               console.error("Missing html argument in add_to_whiteboard call");
+            }
+            break;
+
+          case FUNCTION_NAMES.search:
+            if (args.query) {
+              handleWebSearch(
+                args.query,
+                output.call_id,
+                sendClientEvent,
+              );
+            } else {
+              console.error("Missing query argument in web_search call");
             }
             break;
 
