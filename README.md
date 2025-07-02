@@ -13,6 +13,8 @@ cp ./client/.env.example ./client/.env
 cp .env.example .env
 ```
 
+If you want thumbless-os be able to show images, please configure your unsplash access key `UNSPLASH_ACCESS_KEY` in the `.env`file [create your account here](https://unsplash.com/fr). 
+
 Running this application locally requires [Node.js](https://nodejs.org/) to be installed. Install dependencies for the application with:
 
 ```bash
