@@ -108,6 +108,8 @@ export function processToolCalls(
                   } else {
                     console.error("No Unsplash image found for query", args.query);
                   }
+                   // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
                 })
                 .catch(err => {
                   console.error("Error fetching Unsplash image:", err);
