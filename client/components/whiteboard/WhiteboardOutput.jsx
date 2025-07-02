@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 export default function WhiteboardOutput({ whiteboardHtml, isLoading }) {
-    const isWelcomeScreen = whiteboardHtml.includes("Welcome to AI Teaching Assistant");
+    const isWelcomeScreen = whiteboardHtml.includes("Welcome to Thumbless OS");
     const whiteboardRef = useRef(null);
 
     // Add animation class to elements that changed recently

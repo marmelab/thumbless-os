@@ -1,17 +1,20 @@
 // Whiteboard constants
 
 // Initial HTML for the welcome screen
-export const WELCOME_HTML = `<div id="welcome-container" style="text-align:center; margin-top:20px;">
-  <h2 id="welcome-title" style="color:#2563eb; margin-bottom:15px;">Welcome to AI Teaching Assistant</h2>
-  <p id="welcome-intro" style="font-size:1.1em; margin-bottom:20px;">I'm ready to help you learn any topic with visual explanations.</p>
-  <div id="getting-started" style="padding:10px; border:1px dashed #666; display:inline-block; text-align:left;">
-    <p id="start-heading"><strong>How to get started:</strong></p>
-    <ol id="start-steps" style="margin-top:5px; padding-left:20px;">
-      <li id="step-1">Ask me to explain any concept or topic</li>
-      <li id="step-2">I'll provide visual elements to illustrate key points</li>
-      <li id="step-3">Ask follow-up questions anytime</li>
-    </ol>
-  </div>
+export const WELCOME_HTML = `<div id="welcome-container">
+  <h2 id="welcome-title" class="text-xl font-semibold mt-1 mb-12">Welcome to Thumbless OS</h2>
+  <p id="instructions" class="leading-8 mb-12">
+  Ask me about any concept or topic,
+  and I'll provide visual elements to illustrate key points.<br />
+  Ask follow-up questions anytime.
+  </p>
+  <p id="examples" class="leading-8">Example conversation starters:
+    <ul class="list-disc pl-6">
+      <li><a href="#" class="underline" onclick="userReply('Explain the concept of gravity')">Can you explain the concept of gravity?</a></li>
+      <li><a href="#" class="underline" onclick="userReply('What dog breed would you recommend for a family?')">What dog breed would you recommend for a family?</a></li>
+      <li><a href="#" class="underline" onclick="userReply('What\'s the weather like today in Nancy, France?')">What's the weather like today in Nancy, France?</a></li>
+    </ul>
+  </p>
 </div>`;
 
 // Function names used in the tool calls

@@ -90,9 +90,13 @@ export function processToolCalls(
             break;
           case "search_unsplash_image":
             if (args.query) {
-              fetch(`${import.meta.env.VITE_API_URL}/unsplash-image?q=${encodeURIComponent(args.query)}`)
-                .then(res => res.json())
-                .then(data => {
+              fetch(
+                `${
+                  import.meta.env.VITE_API_URL
+                }/unsplash-image?q=${encodeURIComponent(args.query)}`,
+              )
+                .then((res) => res.json())
+                .then((data) => {
                   if (data.url) {
                     sendClientEvent({
                       type: "conversation.item.create",
@@ -108,25 +112,26 @@ export function processToolCalls(
                       },
                     });
                   } else {
-                    console.error("No Unsplash image found for query", args.query);
+                    console.error(
+                      "No Unsplash image found for query",
+                      args.query,
+                    );
                   }
-                   // Create a new response to continue the flow
+                  // Create a new response to continue the flow
                   sendClientEvent({ type: "response.create" });
                 })
-                .catch(err => {
+                .catch((err) => {
                   console.error("Error fetching Unsplash image:", err);
                 });
             } else {
-              console.error("Missing query argument in search_unsplash_image call");
+              console.error(
+                "Missing query argument in search_unsplash_image call",
+              );
             }
             break;
           case FUNCTION_NAMES.search:
             if (args.query) {
-              handleWebSearch(
-                args.query,
-                output.call_id,
-                sendClientEvent,
-              );
+              handleWebSearch(args.query, output.call_id, sendClientEvent);
             } else {
               console.error("Missing query argument in web_search call");
             }
@@ -134,9 +139,13 @@ export function processToolCalls(
 
           case "search_unsplash_image":
             if (args.query) {
-              fetch(`${import.meta.env.VITE_API_URL}/unsplash-image?q=${encodeURIComponent(args.query)}`)
-                .then(res => res.json())
-                .then(data => {
+              fetch(
+                `${
+                  import.meta.env.VITE_API_URL
+                }/unsplash-image?q=${encodeURIComponent(args.query)}`,
+              )
+                .then((res) => res.json())
+                .then((data) => {
                   if (data.url) {
                     sendClientEvent({
                       type: "conversation.item.create",
@@ -152,26 +161,27 @@ export function processToolCalls(
                       },
                     });
                   } else {
-                    console.error("No Unsplash image found for query", args.query);
+                    console.error(
+                      "No Unsplash image found for query",
+                      args.query,
+                    );
                   }
-                   // Create a new response to continue the flow
+                  // Create a new response to continue the flow
                   sendClientEvent({ type: "response.create" });
                 })
-                .catch(err => {
+                .catch((err) => {
                   console.error("Error fetching Unsplash image:", err);
                 });
             } else {
-              console.error("Missing query argument in search_unsplash_image call");
+              console.error(
+                "Missing query argument in search_unsplash_image call",
+              );
             }
             break;
 
           case FUNCTION_NAMES.search:
             if (args.query) {
-              handleWebSearch(
-                args.query,
-                output.call_id,
-                sendClientEvent,
-              );
+              handleWebSearch(args.query, output.call_id, sendClientEvent);
             } else {
               console.error("Missing query argument in web_search call");
             }
@@ -191,7 +201,7 @@ export function processToolCalls(
   // remind the AI to use visual elements
   if (
     !foundFunctionCalls &&
-    (whiteboardHtml.includes("Welcome to AI Teaching Assistant") ||
+    (whiteboardHtml.includes("Welcome to Thumbless OS") ||
       whiteboardHtml === "")
   ) {
     const hasTextContent = response.response.output.some(
