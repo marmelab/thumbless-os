@@ -1,7 +1,9 @@
+import { handleWebSearch } from "../../tools/webSearch";
+import { FUNCTION_NAMES } from "./constants";
 import {
-  handleWriteToWhiteboard,
-  handleUpdateWhiteboardElement,
   handleAddToWhiteboard,
+  handleUpdateWhiteboardElement,
+  handleWriteToWhiteboard,
 } from "./utils";
 
 export function processToolCalls(
@@ -48,17 +50,18 @@ export function processToolCalls(
         })();
 
         switch (output.name) {
-          case "write_to_whiteboard":
+          case FUNCTION_NAMES.write:
             if (args.html) {
               handleWriteToWhiteboard(args, setWhiteboardHtml, sendClientEvent);
             } else {
               console.error(
                 "Missing html argument in write_to_whiteboard call",
               );
+              console.log(args);
             }
             break;
 
-          case "update_whiteboard_element":
+          case FUNCTION_NAMES.update:
             if (args.elementId && args.html) {
               handleUpdateWhiteboardElement(
                 args,
@@ -73,7 +76,7 @@ export function processToolCalls(
             }
             break;
 
-          case "add_to_whiteboard":
+          case FUNCTION_NAMES.add:
             if (args.html) {
               handleAddToWhiteboard(
                 args,
@@ -83,6 +86,49 @@ export function processToolCalls(
               );
             } else {
               console.error("Missing html argument in add_to_whiteboard call");
+            }
+            break;
+          case "search_unsplash_image":
+            if (args.query) {
+              fetch(`${import.meta.env.VITE_API_URL}/unsplash-image?q=${encodeURIComponent(args.query)}`)
+                .then(res => res.json())
+                .then(data => {
+                  if (data.url) {
+                    sendClientEvent({
+                      type: "conversation.item.create",
+                      item: {
+                        type: "message",
+                        role: "system",
+                        content: [
+                          {
+                            type: "input_text",
+                            text: `Here is an Unsplash image for "${args.query}": ${data.url}. You can use this image in your next whiteboard update by including in your HTML.`,
+                          },
+                        ],
+                      },
+                    });
+                  } else {
+                    console.error("No Unsplash image found for query", args.query);
+                  }
+                   // Create a new response to continue the flow
+                  sendClientEvent({ type: "response.create" });
+                })
+                .catch(err => {
+                  console.error("Error fetching Unsplash image:", err);
+                });
+            } else {
+              console.error("Missing query argument in search_unsplash_image call");
+            }
+            break;
+          case FUNCTION_NAMES.search:
+            if (args.query) {
+              handleWebSearch(
+                args.query,
+                output.call_id,
+                sendClientEvent,
+              );
+            } else {
+              console.error("Missing query argument in web_search call");
             }
             break;
 
@@ -116,6 +162,18 @@ export function processToolCalls(
                 });
             } else {
               console.error("Missing query argument in search_unsplash_image call");
+            }
+            break;
+
+          case FUNCTION_NAMES.search:
+            if (args.query) {
+              handleWebSearch(
+                args.query,
+                output.call_id,
+                sendClientEvent,
+              );
+            } else {
+              console.error("Missing query argument in web_search call");
             }
             break;
 

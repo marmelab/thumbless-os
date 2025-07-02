@@ -2,18 +2,19 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "node server.js --dev",
+    "dev:server": "node server/server.js --dev",
     "dev:client": "vite dev",
-    "start": "node server.js",
+    "start": "node server/server.js",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --ssrManifest",
-    "build:server": "rm -rf dist/server && mkdir -p dist/server && cp server.js dist/server/server.js && cp package.json dist/server/package.json",
+    "build:server": "rm -rf dist/server && mkdir -p dist/server && cp server/server.js dist/server/server.js && cp package.json dist/server/package.json",
     "lint": "eslint . --ext .js,.jsx --fix"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "openai": "^5.8.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.10",
