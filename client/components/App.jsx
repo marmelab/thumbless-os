@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Settings as SettingsIcon } from "react-feather";
 import { Link } from "react-router";
-import logo from "/assets/thumb-down.svg";
+import logo from "/assets/thumbs-up.svg";
 import Screen from "./Screen";
 import { Debug } from "./debug/Debug";
+import { getProfile } from "../profile";
+import { declareTools } from "./whiteboard/declareTools";
 
 export default function App() {
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -15,14 +17,16 @@ export default function App() {
   const [sessionError, setSessionError] = useState(null);
   const [answerStream, setAnswerStream] = useState(null);
   const [questionStream, setQuestionStream] = useState(null);
-  const [isMicrophoneActive, setIsMicrophoneActive] = useState(true);
+  const [isMicrophoneActive, setIsMicrophoneActive] = useState(false);
+
+  const sendTextMessage = useRef(() => { });
 
   useEffect(() => {
-    if(!questionStream) {
+    if (!questionStream) {
       return;
     }
     questionStream.getTracks()[0].enabled = isMicrophoneActive;
-  },[questionStream, isMicrophoneActive])
+  }, [questionStream, isMicrophoneActive])
 
   const toggleMicrophone = useCallback(() => {
     setIsMicrophoneActive((prev) => !prev);
@@ -175,6 +179,7 @@ export default function App() {
     setIsSessionActive(false);
     setDataChannel(null);
     peerConnection.current = null;
+    setEvents([]);
   }
 
   // Send an event to the model
@@ -196,7 +201,7 @@ export default function App() {
   }
 
   // Send a text message to the model
-  function sendTextMessage(message) {
+  sendTextMessage.current = (message) => {
     const event = {
       type: "conversation.item.create",
       item: {
@@ -234,7 +239,7 @@ export default function App() {
             setState('asking');
             break;
           default:
-            // do nothing
+          // do nothing
         }
 
         if (
@@ -253,6 +258,9 @@ export default function App() {
 
       // Set session active when the data channel is opened
       dataChannel.addEventListener("open", () => {
+        // start by declaring tools
+        const profile = getProfile();
+        sendClientEvent(declareTools(profile));
         setIsSessionActive(true);
         setEvents([]);
       });
@@ -261,10 +269,17 @@ export default function App() {
     return () => stopSession();
   }, [dataChannel]);
 
+  useEffect(() => {
+    window.userReply = (message) => {
+      // Add userReply in front of the message because too small replies prevent the AI from responding.
+      sendTextMessage.current(`userReply: ${message}`);
+    }
+  }, [sendTextMessage]);
+
   return (
     <>
-      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
-        <div className="flex items-center justify-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
+      <nav className="absolute top-0 left-0 right-0 flex items-center">
+        <div className="flex items-center justify-center gap-2 w-full py-3 px-4 border-0 border-b border-solid border-gray-200">
           <img style={{ width: "24px" }} src={logo} />
           <h1>Thumbless OS</h1>
           <Link to="/settings" className="ml-auto" title="Settings">
@@ -277,7 +292,7 @@ export default function App() {
         <Screen
           state={state}
           sendClientEvent={sendClientEvent}
-          sendTextMessage={sendTextMessage}
+          sendTextMessage={sendTextMessage.current}
           events={events}
           isSessionActive={isSessionActive}
           questionStream={questionStream}
@@ -289,7 +304,7 @@ export default function App() {
           startSession={startSession}
           stopSession={stopSession}
           sendClientEvent={sendClientEvent}
-          sendTextMessage={sendTextMessage}
+          sendTextMessage={sendTextMessage.current}
           events={events}
           isSessionActive={isSessionActive}
           sessionError={sessionError}
