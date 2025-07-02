@@ -115,8 +115,6 @@ export async function handleSendEmail(
     },
   });
 
-  console.log(await emailResult.json());
-
   handleAddToWhiteboard(
     {
       html: `
@@ -128,5 +126,60 @@ export async function handleSendEmail(
     whiteboardHtml,
     setWhiteboardHtml,
     sendClientEvent,
+  );
+}
+
+export async function handleReadEmail(args, sendClientEvent) {
+  console.log("Reading email:", { args });
+
+  const emailResult = await fetch(`${import.meta.env.VITE_API_URL}/email`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const emailJson = await emailResult.text();
+
+  sendSystemMessageAndResponse(
+    sendClientEvent,
+    `Given the user's request: "${args.request}", extract the relevant email array that matches the request and provide a summary of their content from the emails below encoded as JSON. If no email match the request, return an empty emails array and no summary. Call the function read_email_output with the extract emails and summary as arguments.
+
+    emails: ${emailJson}
+    
+    DO NOT WRITE TO THE BOARD OR SPEAK, JUST CALL THE FUNCTION`,
+  );
+}
+
+export function handleReadEmailOutput(
+  args,
+  whiteboardHtml,
+  setWhiteboardHtml,
+  sendClientEvent,
+) {
+  console.log("Handling read email output:", { args });
+
+  if (!args.emails?.length || !args.summary) {
+    sendSystemMessageAndResponse(
+      sendClientEvent,
+      `No email found that matches the request. Please ensure the email object is valid and contains the necessary information.`,
+    );
+    return;
+  }
+
+  // Add the email content to the whiteboard
+  handleAddToWhiteboard(
+    {
+      html: `<p>${args.summary}</p>`,
+    },
+    whiteboardHtml,
+    setWhiteboardHtml,
+    sendClientEvent,
+  );
+
+  // Continue explanation naturally
+  sendSystemMessageAndResponse(
+    sendClientEvent,
+    `Tell the user the following information ${args.summary} without writing to the board.`,
   );
 }

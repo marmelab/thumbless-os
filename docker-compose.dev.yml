@@ -1,0 +1,29 @@
+services:
+  client:
+    image: node:22-alpine
+    user: '${UID}:${GID}'
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: ["npx", "vite", "dev", "--host", "0.0.0.0"]
+    ports:
+      - "127.0.0.1:5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+  
+  server:
+    image: node:22-alpine
+    user: '${UID}:${GID}'
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: ["node", "server/server.js", " --dev"]
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  mail-server:
+    image: greenmail/standalone
+    ports:
+      - "127.0.0.1:3080:8080"
+      - "127.0.0.1:3143:3143"
+      - "127.0.0.1:3025:3025"

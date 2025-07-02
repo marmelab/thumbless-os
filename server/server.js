@@ -149,6 +149,16 @@ app.post("/email", async (req, res) => {
   }
 });
 
+app.get("/email", async (req, res) => {
+  try {
+    const emails = await mailer.listEmails();
+    res.status(200).json(emails);
+  } catch (error) {
+    console.error("Error fetching emails:", error);
+    res.status(500).json({ error: "Failed to fetch emails" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Express server running on *:${port}`);
 });

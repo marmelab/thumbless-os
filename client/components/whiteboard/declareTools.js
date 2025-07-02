@@ -100,7 +100,8 @@ export const declareTools = (profile) => ({
         },
       },
       {
-        name: FUNCTION_NAMES.email,
+        type: "function",
+        name: FUNCTION_NAMES.send_email,
         description:
           "You are a specialised mailing agent connected to my mailbox. Send an email to a given recipient with a given sender, subject and message.",
         parameters: {
@@ -124,6 +125,64 @@ export const declareTools = (profile) => ({
             },
           },
           required: ["to", "subject", "body", "from"],
+        },
+      },
+      {
+        type: "function",
+        name: FUNCTION_NAMES.read_email,
+        description:
+          "You are a specialised mailing agent connected to my mailbox. Read an email from a given sender, subject and message.",
+        parameters: {
+          type: "object",
+          properties: {
+            request: {
+              type: "string",
+              description: "The user request",
+            },
+          },
+          required: ["request"],
+        },
+      },
+      {
+        type: "function",
+        name: FUNCTION_NAMES.read_email_output,
+        parameters: {
+          type: "object",
+          properties: {
+            emails: {
+              type: "array",
+              description:
+                "An array of email objects containing the content to be used in the conversation.",
+              items: {
+                type: "object",
+                description:
+                  "The email object containing the content to be used in the conversation.",
+                properties: {
+                  subject: {
+                    type: "string",
+                    description: "The email subject",
+                  },
+                  from: {
+                    type: "string",
+                    description: "The email sender",
+                  },
+                  to: {
+                    type: "string",
+                    description: "The email recipient",
+                  },
+                  body: {
+                    type: "string",
+                    description: "The email body",
+                  },
+                },
+              },
+            },
+            summary: {
+              type: "string",
+              description:
+                "A summary of the email content to be used in the conversation.",
+            },
+          },
         },
       },
     ],
