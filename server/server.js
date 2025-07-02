@@ -1,9 +1,9 @@
+import { run } from '@openai/agents';
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
-import { handleWebSearch } from "./webSearch.js";
 import { agent, mcpServer } from "./agentCalendar.js";
-import { run } from '@openai/agents';
+import { handleWebSearch } from "./webSearch.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -76,14 +76,15 @@ app.get("/calendar", async (req, res) => {
   try {
     await mcpServer.connect();
     const result = await run(agent, query);
-    console.log("Calendar query:", query);
-    console.log("Calendar request result:", result);
-    res.json({ result });
+    res.json({ result: result.finalOutput });
   } catch (error) {
     console.error("Calendar mcp error:", error);
     res
       .status(500)
       .json({ error: "Failed to perform calendar request", message: error.message });
+  }
+  finally {
+    await mcpServer.close();
   }
 });
 
