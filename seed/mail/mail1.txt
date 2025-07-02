@@ -1,0 +1,11 @@
+From: Jane Doe <jane.doe@marmelab.com>
+To: John Doe <john.doe@marmelab.com>
+Subject: Happy Birthday
+Date: Mon, 30 June 2025 08:45:16
+
+Dear John,
+
+I wish you a happy birthday! I hope you have a wonderful day filled with joy and laughter.
+
+Best wishes,
+Jane

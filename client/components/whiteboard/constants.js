@@ -21,4 +21,7 @@ export const FUNCTION_NAMES = {
   add: "add_to_whiteboard",
   image: "search_unsplash_image",
   search: "web_search",
+  send_email: "send_email",
+  read_email: "read_email",
+  read_email_output: "read_email_output",
 };

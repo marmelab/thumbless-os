@@ -1,0 +1,11 @@
+From: Jane Doe <jane.doe@marmelab.com>
+To: John Doe <john.doe@marmelab.com>
+Subject: Marketing Strategy Meeting
+Date: Wed, 2 July 2025 08:45:16
+
+Dear John,
+
+I would like to formally invite you to the Marketing Strategy Meeting on July 10, 2025. Your insights and expertise would be invaluable to our discussions.
+
+Best regards,
+Jane
