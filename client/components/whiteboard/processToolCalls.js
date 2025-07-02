@@ -55,6 +55,7 @@ export function processToolCalls(
               console.error(
                 "Missing html argument in write_to_whiteboard call",
               );
+              console.log(args);
             }
             break;
 
