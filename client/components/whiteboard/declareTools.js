@@ -8,17 +8,17 @@ export const declareTools = (profile) => ({
     tools: [
       {
         type: "function",
-        name: FUNCTION_NAMES.fetch_url,
-        description: "Fetches a webpage and converts its content into markdown.",
+        name: FUNCTION_NAMES.search,
+        description: "Performs an internet search using a search engine with the given query.",
         parameters: {
           type: "object",
           properties: {
-            url: {
+            query: {
               type: "string",
-              description: "The URL of the page to fetch",
+              description: "The search query",
             },
           },
-          required: ["url"],
+          required: ["query"],
         },
       },
       {
@@ -96,6 +96,7 @@ CONVERSATION FLOW:
 - Wait for the user to initiate the conversation with a learning request
 - Once the user has spoken, respond first with tools calls to update the whiteboard, then use voice to explain the topic
 - ALWAYS print to the whiteboard and speak about the topic
+- If you need to perform a web search, use the search tool to find relevant information and THEN you MUST write it to the whiteboard
 - You can pause your explanation to update the whiteboard
 - If the user asks for a new topic, you can replace the entire whiteboard content with a new explanation by using the write_to_whiteboard tool
 - Always refer to the user by their name if provided, or use "you" if not (${

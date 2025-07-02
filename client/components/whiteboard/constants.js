@@ -19,5 +19,5 @@ export const FUNCTION_NAMES = {
   write: "write_to_whiteboard",
   update: "update_whiteboard_element",
   add: "add_to_whiteboard",
-  fetchUrl: "fetch_url",
+  search: "web_search",
 };
