@@ -2,6 +2,8 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import { handleWebSearch } from "./webSearch.js";
+import { agent, mcpServer } from "./agentCalendar.js";
+import { run } from '@openai/agents';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -62,6 +64,26 @@ app.get("/web-search", async (req, res) => {
     res
       .status(500)
       .json({ error: "Failed to perform web search", message: error.message });
+  }
+});
+
+// API route for web search
+app.get("/calendar", async (req, res) => {
+  const query = req.query.q;
+  if (!query) {
+    return res.status(400).json({ error: "Query parameter 'q' is required" });
+  }
+  try {
+    await mcpServer.connect();
+    const result = await run(agent, query);
+    console.log("Calendar query:", query);
+    console.log("Calendar request result:", result);
+    res.json({ result });
+  } catch (error) {
+    console.error("Calendar mcp error:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to perform calendar request", message: error.message });
   }
 });
 

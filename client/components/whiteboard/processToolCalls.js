@@ -1,3 +1,4 @@
+import { handleCalendarRequest } from "../../tools/calendar";
 import { handleWebSearch } from "../../tools/webSearch";
 import { FUNCTION_NAMES } from "./constants";
 import {
@@ -97,6 +98,18 @@ export function processToolCalls(
               );
             } else {
               console.error("Missing query argument in web_search call");
+            }
+            break;
+
+          case FUNCTION_NAMES.calendar:
+            if (args.query) {
+              handleCalendarRequest(
+                args.query,
+                output.call_id,
+                sendClientEvent,
+              );
+            } else {
+              console.error("Missing query argument in calendar_request call");
             }
             break;
 

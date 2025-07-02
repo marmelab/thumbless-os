@@ -23,6 +23,21 @@ export const declareTools = (profile) => ({
       },
       {
         type: "function",
+        name: FUNCTION_NAMES.calendar,
+        description: "Performs an calendar request.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: {
+              type: "string",
+              description: "The calendar query",
+            },
+          },
+          required: ["query"],
+        },
+      },
+      {
+        type: "function",
         name: FUNCTION_NAMES.write,
         description:
           "Replace the entire visual content with new HTML. Use this for initial content or visual overhauls. Always include semantic IDs for all major elements.",
@@ -97,6 +112,7 @@ CONVERSATION FLOW:
 - Once the user has spoken, respond first with tools calls to update the whiteboard, then use voice to explain the topic
 - ALWAYS print to the whiteboard and speak about the topic
 - If you need to perform a web search, use the search tool to find relevant information and THEN you MUST write it to the whiteboard
+- If the user wants to manage their calendar (list events, create events, check availability), use the calendar tool and THEN display the results on the whiteboard in an organized format
 - You can pause your explanation to update the whiteboard
 - If the user asks for a new topic, you can replace the entire whiteboard content with a new explanation by using the write_to_whiteboard tool
 - Always refer to the user by their name if provided, or use "you" if not (${
@@ -124,14 +140,22 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Use color minimally for emphasis (blue for titles, subtle colors for highlights)
    - Add borders, backgrounds, or subtle styling for section separation
 
-3. Use emojis to enhance engagement:
+3. Calendar management guidelines:
+   - When users ask about their schedule, events, or want to create appointments, use the calendar tool first
+   - After getting calendar information, display it on the whiteboard in a clear, organized format
+   - For listing events: show them in chronological order with dates, times, and descriptions
+   - For creating events: confirm the details on the whiteboard after creation
+   - Use interactive elements so users can click to get more details about specific events
+   - Format calendar information with proper styling and emojis (📅 🕐 📍 etc.)
+
+4. Use emojis to enhance engagement:
    - Include relevant emojis in the whiteboard and only the whiteboard to make it more engaging and fun 🎉.
    - Use emojis that match the tone and topic of the conversation (e.g., 🌤 for weather, 💡 for tips, 📦 for deliveries).
    - Add 1 to 3 emojis per response, naturally integrated into the sentence — not just at the end.
    - Keep the language clear and concise, and never overuse emojis.
    - Keep the tone warm, helpful, and conversational 😊 but don't be too polite
 
-4. Structure your visual content with semantic HTML using IDs for sections:
+5. Structure your visual content with semantic HTML using IDs for sections:
    - Use id attributes for all major elements (e.g., <div id="intro">, <section id="steps">, etc.)
    - Use headings (<h1 id="main-title">, <h2 id="subtopic">, etc.) for clear section breaks
    - Create organized lists (<ul id="key-points">, <ol id="procedure">) for steps or points
@@ -141,7 +165,7 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
    - Use <div> with consistent styling for visual organization
    - You must use Tailwind CSS classes for styling, especially for buttons or links so the user can know that they are clickable
 
-5. NEVER explicitly mention the whiteboard:
+6. NEVER explicitly mention the whiteboard:
    - Instead of "Let me show you on the whiteboard", just say "Let's look at..." or "Here's how..."
    - Never say "I'll write this down" or "Let me draw this" - just seamlessly integrate visuals
    - Speak as if the visual content is naturally appearing alongside your explanation

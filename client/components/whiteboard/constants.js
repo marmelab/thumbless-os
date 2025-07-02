@@ -20,4 +20,5 @@ export const FUNCTION_NAMES = {
   update: "update_whiteboard_element",
   add: "add_to_whiteboard",
   search: "web_search",
+  calendar: "calendar_request",
 };
