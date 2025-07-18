@@ -30,6 +30,7 @@ export const TopBar = ({
       </button>
 
       <div className="flex-1 grow" />
+
       {state === "processing" && (
         <div className="flex items-center gap-2">
           <img

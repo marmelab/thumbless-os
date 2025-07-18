@@ -1,7 +1,7 @@
 import WhiteboardOutput from "./whiteboard/WhiteboardOutput";
 import { useWhiteboardState } from "./whiteboard/useWhiteboardState";
-import { ActivityIndicator } from "./ActivityIndicator";
-import { SendMessage } from "./debug/SendMessage";
+import { UserInput } from "./UserInput";
+
 import { TopBar } from "./TopBar";
 
 export default function Screen({
@@ -36,36 +36,29 @@ export default function Screen({
     >
       <div className="w-full max-w-[450px] h-full flex bg-white rounded-md">
         {isSessionActive ? (
-          <div className="w-full h-full text-lg flex flex-col">
-            <div className={`w-full grow bg-white rounded-md p-4 overflow-y-auto border-2 align-center ${!isResponseComplete ? 'border-blue-400 pulse-border' :
-              (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
-              }`}>
+          <div className={`flex flex-col gap-2 w-full h-full grow bg-white text-lg rounded-md p-4 overflow-y-auto border-2 align-center ${!isResponseComplete ? 'border-blue-400 pulse-border' :
+            (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
+            }`}>
 
-              <TopBar state={state} goBack={goBack} goToNextPage={goToNextPage} />
+            <TopBar state={state} goBack={goBack} goToNextPage={goToNextPage} />
 
+            <WhiteboardOutput
+              whiteboardHtml={whiteboardHtml}
+              isLoading={!isResponseComplete}
+              isSessionActive={isSessionActive}
+              answerStream={answerStream}
+              questionStream={questionStream}
+            />
 
-
-              <WhiteboardOutput
-                whiteboardHtml={whiteboardHtml}
-                isLoading={!isResponseComplete}
-                isSessionActive={isSessionActive}
-                answerStream={answerStream}
-                questionStream={questionStream}
-              />
-            </div>
-            <div className="absolute flex w-full bottom-0 left-1/2 right-1/2 transform -translate-x-1/2 flex-rw items-center justify-center gap-4 p-8">
-              <ActivityIndicator
-                questionStream={questionStream}
-                answerStream={answerStream}
-                state={state}
-                isSessionActive={isSessionActive}
-                isMicrophoneActive={isMicrophoneActive}
-                toggleMicrophone={toggleMicrophone}
-              />
-              <div>
-                <SendMessage sendTextMessage={sendTextMessage} />
-              </div>
-            </div>
+            <UserInput
+              sendTextMessage={sendTextMessage}
+              questionStream={questionStream}
+              answerStream={answerStream}
+              state={state}
+              isSessionActive={isSessionActive}
+              isMicrophoneActive={isMicrophoneActive}
+              toggleMicrophone={toggleMicrophone}
+            />
           </div>
         ) : (
           <div className="w-full h-full bg-gray-50 rounded-md border-2 border-gray-300 p-4 flex items-center justify-center">

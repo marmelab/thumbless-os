@@ -37,6 +37,7 @@ export default function WhiteboardOutput({ whiteboardHtml }) {
 
     return (
         <div
+            className="flex-1 grow"
             ref={whiteboardRef}
             dangerouslySetInnerHTML={{ __html: whiteboardHtml }}
         />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MessageSquare } from "react-feather";
-import Button from "../Button";
+import Button from "./Button";
 
 export function SendMessage({ sendTextMessage }) {
   const [message, setMessage] = useState("");
