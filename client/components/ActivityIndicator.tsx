@@ -20,22 +20,14 @@ export const ActivityIndicator = ({
       className="relative cursor-pointer transition-all duration-300 ease-in-out hover:scale-110"
       onClick={() => toggleMicrophone()}
     >
-      {state === "processing" ? (
+      {(!isMicrophoneActive || state === "asking") && (
         <img
-          className="absolute"
-          src="/assets/loading.svg"
-          alt="Processing Icon"
+          className="absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          src={`/assets/microphone${
+            isMicrophoneActive ? "" : "-disabled"
+          }.svg`}
+          alt="Microphone Icon"
         />
-      ) : (
-        (!isMicrophoneActive || state === "asking") && (
-          <img
-            className="absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            src={`/assets/microphone${
-              isMicrophoneActive ? "" : "-disabled"
-            }.svg`}
-            alt="Processing Icon"
-          />
-        )
       )}
       <SoundVisualizer
         audioStream={state === "answering" ? answerStream : questionStream}
