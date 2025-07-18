@@ -19,7 +19,7 @@ export function SendMessage({ sendTextMessage }) {
           }
         }}
         type="text"
-        placeholder="Ask any question or type a topic to learn about..."
+        placeholder="Ask a question"
         className="border border-gray-200 rounded-full p-3 flex-1 bg-white"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
@@ -30,11 +30,10 @@ export function SendMessage({ sendTextMessage }) {
             handleSendClientEvent();
           }
         }}
-        icon={<MessageSquare height={16} />}
+        icon={<MessageSquare height={28} />}
         variant="outline"
-      >
-        Send
-      </Button>
+        className="px-6 py-3"
+      />
     </div>
 
   );
