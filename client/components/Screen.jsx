@@ -15,11 +15,13 @@ export default function Screen({
   toggleMicrophone,
 }) {
   // Use our custom hook for whiteboard state management
-  const { whiteboardHtml, isResponseComplete } = useWhiteboardState(
+  const { whiteboardHtml, isResponseComplete, goBack, goToNextPage } = useWhiteboardState(
     isSessionActive,
     sendClientEvent,
     events,
   );
+
+  const isWelcomeScreen = whiteboardHtml.includes("Welcome to Thumbless OS");
 
   return (
     <section
@@ -34,13 +36,32 @@ export default function Screen({
       <div className="w-full max-w-[450px] h-full flex bg-white rounded-md">
         {isSessionActive ? (
           <div className="w-full h-full text-lg flex flex-col">
-            <WhiteboardOutput
-              whiteboardHtml={whiteboardHtml}
-              isLoading={!isResponseComplete}
-              isSessionActive={isSessionActive}
-              answerStream={answerStream}
-              questionStream={questionStream}
-            />
+            <div className={`w-full grow bg-white rounded-md p-4 overflow-y-auto border-2 align-center ${!isResponseComplete ? 'border-blue-400 pulse-border' :
+              (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
+              }`}>
+              <div className="flex justify-between mb-2">
+                {
+                  goBack &&
+                  <button className="bg-gray-800 mb-2 w-fit text-white rounded-full py-2 px-4 hover:opacity-90" type="button" onClick={goBack}>
+                    &lt; Go back
+                  </button>
+                }
+                {
+                  goToNextPage &&
+                  <button className="bg-gray-800 mb-2 ml-auto w-fit text-white rounded-full py-2 px-4 hover:opacity-90" type="button" onClick={goToNextPage}>
+                    &gt; Next page
+                  </button>
+                }
+              </div>
+
+              <WhiteboardOutput
+                whiteboardHtml={whiteboardHtml}
+                isLoading={!isResponseComplete}
+                isSessionActive={isSessionActive}
+                answerStream={answerStream}
+                questionStream={questionStream}
+              />
+            </div>
             <div className="absolute flex w-full bottom-0 left-1/2 right-1/2 transform -translate-x-1/2 flex-rw items-center justify-center gap-4 p-8">
               <ActivityIndicator
                 questionStream={questionStream}

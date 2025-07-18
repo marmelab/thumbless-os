@@ -99,6 +99,12 @@ export const declareTools = (profile) => ({
           required: ["query"],
         },
       },
+      {
+        type: "function",
+        name: FUNCTION_NAMES.goBack,
+        description:
+          "Go back to a previous version of the whiteboard, which is sent back to you so you can know about it. Use this function when the user asks to go back to the previous subject.",
+      },
     ],
     tool_choice: "auto",
     instructions: `You are an AI Assistant embedded in a chat application. For every user message, you must respond by calling at least one of the predefined functions, even if the user message is conversational or vague.
