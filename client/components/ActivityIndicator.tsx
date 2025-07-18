@@ -29,8 +29,10 @@ export const ActivityIndicator = ({
       ) : (
         (!isMicrophoneActive || state === "asking") && (
           <img
-            className="absolute w-20 h-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            src={`/assets/microphone${isMicrophoneActive ? "" : "-disabled"}.svg`}
+            className="absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            src={`/assets/microphone${
+              isMicrophoneActive ? "" : "-disabled"
+            }.svg`}
             alt="Processing Icon"
           />
         )

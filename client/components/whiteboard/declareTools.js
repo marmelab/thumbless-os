@@ -9,7 +9,8 @@ export const declareTools = (profile) => ({
       {
         type: "function",
         name: FUNCTION_NAMES.search,
-        description: "Performs an internet search using a search engine with the given query.",
+        description:
+          "Performs an internet search using a search engine with the given query.",
         parameters: {
           type: "object",
           properties: {
@@ -84,19 +85,22 @@ export const declareTools = (profile) => ({
       },
       {
         type: "function",
-          name: FUNCTION_NAMES.image,
-          description:
-            "Search Unsplash for a relevant image. Returns a direct image URL. After receiving the URL, use it in your next whiteboard update by including an <img src='...'> tag in your HTML. When generating a list with images, always place each <img> tag inside its corresponding <li>, directly below the item description.",
-          parameters: {
-            type: "object",
-            properties: {
-              query: {
-                type: "string",
-                description: "The search term for the Unsplash image.",
-              },
+        name: FUNCTION_NAMES.image,
+        description:
+          "Search Unsplash for a relevant image. Returns a direct image URL. After receiving the URL, use it in your next whiteboard update by including an <img src='...'> tag in your HTML. When generating a list with images, always place each <img> tag inside its corresponding <li>, directly below the item description.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: {
+              type: "string",
+              description: "The search term for the Unsplash image.",
             },
-            required: ["query"],
           },
+          required: ["query"],
+        },
+      },
+      {
+        type: "function",
         name: FUNCTION_NAMES.goBack,
         description:
           "Go back to a previous version of the whiteboard, which is sent back to you so you can know about it. Use this function when the user asks to go back to the previous subject.",
@@ -171,8 +175,8 @@ TEACHING GUIDELINES FOR SEAMLESS EXPLANATION:
 
 Examples of good HTML (note that it includes links that call the userReply function which is available in the client):
 <div id="intro" class="p-4 bg-gray-100 rounded">
-<h2 class="text-2xl text-zinc-600 mb-2">Top 5 Horror Movies 📽️</h2>
-<p>Here are some iconic horror films that have left a lasting impact on the genre:</p>
+<h2 class="text-2xl font-thin mb-4 text-zinc-600">Top 5 Horror Movies 📽️</h2>
+<p class="leading-6">Here are some iconic horror films that have left a lasting impact on the genre:</p>
 </div>
 <ul id="movies-list" class="list-disc pl-8 mt-2">
   <li><strong>1. Psycho (1960)</strong>: A classic thriller by Alfred Hitchcock known for its suspenseful scenes and plot twists. <a class="underline text-blue-500" href="#" onclick="userReply('Psycho details')">Details</a></li>

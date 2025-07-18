@@ -38,7 +38,7 @@ export default function Screen({
           <div className="w-full h-full text-lg flex flex-col">
             <div className={`w-full grow bg-white rounded-md p-4 overflow-y-auto border-2 align-center ${!isResponseComplete ? 'border-blue-400 pulse-border' :
               (isWelcomeScreen ? 'border-green-300' : 'border-gray-300')
-            }`}>
+              }`}>
               <div className="flex justify-between mb-2">
                 {
                   goBack &&
@@ -56,6 +56,7 @@ export default function Screen({
 
               <WhiteboardOutput
                 whiteboardHtml={whiteboardHtml}
+                isLoading={!isResponseComplete}
                 isSessionActive={isSessionActive}
                 answerStream={answerStream}
                 questionStream={questionStream}
