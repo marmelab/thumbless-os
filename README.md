@@ -1,6 +1,8 @@
 # Thumbless OS
 
-This is a POC for a realtime voice-based mobile OS using the [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime) with [WebRTC](https://platform.openai.com/docs/guides/realtime-webrtc).
+Proof-of-concept for a realtime voice-based mobile OS using the [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime) with [WebRTC](https://platform.openai.com/docs/guides/realtime-webrtc). It generates the user interface on-the-fly, depending on the task performed by the end user. 
+
+<img width="960" height="584" alt="image" src="https://github.com/user-attachments/assets/4d7c9ef3-b868-4ad5-be6b-d22d6e6dd45a" />
 
 ## Installation and usage
 
